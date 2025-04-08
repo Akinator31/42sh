@@ -17,7 +17,7 @@ bool is_nothing(char ***envp, char *command,
     exit_status_t *status, int *error_code)
 {
     if (my_strlen(command) == 1) {
-        if (isatty(stdin->_fileno))
+        if (isatty(STDIN_FILENO))
             print_prompt(*envp);
         *status = NOTHING;
         return true;

@@ -20,7 +20,7 @@ int handle_output_command(int result_command, char *buffer, char ***envp)
         free(buffer);
         return EXIT;
     }
-    if (result_command == NORMAL && isatty(stdin->_fileno))
+    if (result_command == NORMAL && isatty(STDIN_FILENO))
         print_prompt(*envp);
     if (result_command == NOTHING)
         return 0;
@@ -35,7 +35,7 @@ int mysh(char ***envp, int *error_code)
     char *buffer = NULL;
     size_t len = 0;
 
-    if (isatty(stdin->_fileno))
+    if (isatty(STDIN_FILENO))
         print_prompt(*envp);
     while (getline(&buffer, &len, stdin) != -1) {
         result_command = analyse_command(envp, buffer, error_code);
@@ -61,7 +61,7 @@ int main(int ac, char **av, char **envp)
         return 84;
     env = duplicate_2d_char_array(envp, get_2d_arr_len(envp) + 1);
     mysh_exit_status = mysh(&env, &error_code);
-    if (mysh_exit_status == EXIT_EOF && isatty(stdin->_fileno))
+    if (mysh_exit_status == EXIT_EOF && isatty(STDIN_FILENO))
         write(1, "exit\n", 5);
     free_2d_array_of_char(env);
     return error_code;
