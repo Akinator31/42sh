@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <time.h>
 
 static bool check_first_char(char c)
 {
@@ -23,20 +24,6 @@ static bool check_first_char(char c)
     if (my_isspace(c) || my_isnewline(c))
         return false;
     return true;
-}
-
-static char *retrive_history_path(char ***envp)
-{
-    char *homepath = get_environ_variable_value(envp, "HOME");
-    char *logpath = NULL;
-
-    if (!homepath)
-        homepath = "/tmp/";
-    logpath = malloc(sizeof(char) * my_strlen(homepath) + 16);
-    logpath = my_strcpy(logpath, homepath);
-    free(homepath);
-    logpath = my_strcat(logpath, "/.42sh_history");
-    return logpath ? logpath : NULL;
 }
 
 static void write_history(char *logpath, struct stat *sb)
@@ -100,17 +87,18 @@ void my_write_history(char *line, char ***envp)
     char *history_file_path = retrive_history_path(envp);
     FILE *stream = NULL;
     size_t len = 0;
+    struct tm *time = my_gettime();
 
     if (!history_file_path)
         return;
     stream = get_history_file(history_file_path);
-    if (stream == NULL) {
-        free(history_file_path);
-        return;
-    }
+    if (stream == NULL)
+        return free(history_file_path);
     if (!check_first_char(line[0]))
         return;
-    if (fprintf(stream, "\t%s", line) < 0)
+    len = count_lines(history_file_path);
+    if (fprintf(stream, "\t%ld\t%d:%d\t%s",
+        len, time->tm_hour, time->tm_min, line) < 0)
         perror("Can't write into history file");
     fclose(stream);
     free(history_file_path);
