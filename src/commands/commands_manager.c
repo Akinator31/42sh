@@ -26,7 +26,7 @@ static const my_builtins_t my_builtins_arr[] = {
     {NULL, NULL},
 };
 
-int handle_metacharacters(char *command, char ***envp, int *error_code)
+static int handle_metacharacters(char *command, char ***envp, int *error_code)
 {
     if (handle_semicolons(command, envp, error_code))
         return 1;
