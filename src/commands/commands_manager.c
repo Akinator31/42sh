@@ -23,6 +23,7 @@ static const my_builtins_t my_builtins_arr[] = {
     {"setenv", &is_setenv_command},
     {"unsetenv", &is_unsetenv_command},
     {"cd", &is_cd_command},
+    {"history", &is_history_command},
     {NULL, NULL},
 };
 
