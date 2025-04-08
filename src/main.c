@@ -13,6 +13,7 @@
 #include "my_lib.h"
 #include "mysh.h"
 #include "utils.h"
+#include "commands.h"
 
 int handle_output_command(int result_command, char *buffer, char ***envp)
 {
@@ -38,6 +39,7 @@ int mysh(char ***envp, int *error_code)
     if (isatty(STDIN_FILENO))
         print_prompt(*envp);
     while (getline(&buffer, &len, stdin) != -1) {
+        my_write_history(buffer, envp);
         result_command = analyse_command(envp, buffer, error_code);
         restore_stdin_stdout_fd(stdin_cpy, stdout_cpy);
         if (handle_output_command(result_command, buffer, envp)) {
