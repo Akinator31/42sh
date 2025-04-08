@@ -83,7 +83,7 @@ char **my_str_to_word_array(char const *str, char *separator)
 
     result[count_word(str, separator)] = NULL;
     if (!str)
-        return result;
+        return NULL;
     for (i = 0; (nb_word < count_word(str, separator)) ||
         (i <= my_strlen(str)); i++) {
         if (is_alphanumeric_char(str[i], separator) == 1) {
