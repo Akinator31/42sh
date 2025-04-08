@@ -20,7 +20,7 @@ static bool check_first_char(char c)
 {
     if (!c)
         return false;
-    if (c == ' ' || c == '\t' || c == '\v' || c == '\n')
+    if (my_isspace(c) || my_isnewline(c))
         return false;
     return true;
 }
@@ -34,6 +34,7 @@ static char *retrive_history_path(char ***envp)
         homepath = "/tmp/";
     logpath = malloc(sizeof(char) * my_strlen(homepath) + 16);
     logpath = my_strcpy(logpath, homepath);
+    free(homepath);
     logpath = my_strcat(logpath, "/.42sh_history");
     return logpath ? logpath : NULL;
 }
@@ -85,8 +86,10 @@ bool is_history_command(char ***envp, char *command,
     if (!logpath)
         return false;
     stat(logpath, &sb);
-    if (sb.st_size <= 0)
+    if (sb.st_size <= 0) {
+        free(logpath);
         return 0;
+    }
     write_history(logpath, &sb);
     free(logpath);
     return true;

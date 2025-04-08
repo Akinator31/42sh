@@ -29,5 +29,7 @@ char **str_to_word_array(const char *string, const char *separators);
 void *my_memcpy(void *dest, const void *src, size_t size);
 void *my_realloc(void *pointer, size_t memory_size, size_t original_size);
 void *my_memset(void *pointer, int value, size_t size);
+int my_isspace(int c);
+int my_isnewline(int c);
 
 #endif
