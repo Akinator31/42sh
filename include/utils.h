@@ -8,6 +8,7 @@
 #ifndef INCLUDED_UTILS_H
     #define INCLUDED_UTILS_H
     #include <stdbool.h>
+    #include <stddef.h>
 
 bool is_good_cmd(char *cmd, char *prompt);
 char *get_environ_var(const char *name, const char *value);
@@ -35,5 +36,8 @@ int duplicate_file_descriptor(int fd);
 void restore_stdin_stdout_fd(int stdin_cpy, int stdout_cpy);
 void close_fds(int nb_elements, ...);
 void my_dup2(int oldfd, int newfd);
+struct tm *my_gettime(void);
+size_t count_lines(char *path);
+char *retrive_history_path(char ***envp);
 
 #endif
