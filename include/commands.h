@@ -24,5 +24,9 @@ bool is_cd_command(char ***envp, char *command,
     exit_status_t *status, int *error_code);
 void my_exec(char ***envp, char *command,
     exit_status_t *status, int *error_code);
+bool is_history_command(char ***envp, char *command,
+    exit_status_t *status, int *error_code);
+
+void my_write_history(char *line, char ***envp);
 
 #endif
