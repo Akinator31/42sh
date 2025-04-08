@@ -1,0 +1,22 @@
+name: Criterion tests check
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer les dépendences
+        run: sudo apt update && sudo apt install -y gcc make clang libcriterion-dev
+
+      - name: Compiler et tester le projet
+        run: make tests_run

@@ -1,0 +1,8 @@
+.vscode
+tester.sh
+test
+coding-style-reports.log
+a.out
+my_seg
+exec_file
+tester/
