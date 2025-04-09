@@ -5,12 +5,20 @@
 ** errno_manager
 */
 
+#include <errno.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
 #include "my_lib.h"
+
+static char *my_strerror(void)
+{
+    if (errno == ENOEXEC)
+        return "Exec format error. Binary file not executable";
+    return strerror(errno);
+}
 
 void errno_manager(int exec_return, char **command_element)
 {
@@ -22,7 +30,7 @@ void errno_manager(int exec_return, char **command_element)
         free_2d_array_of_char(command_element);
         exit(EXIT_FAILURE);
     } else if (exec_return != 0) {
-        error_to_string = strerror(errno);
+        error_to_string = my_strerror();
         write(2, command_element[0], my_strlen(command_element[0]));
         write(2, ": ", 2);
         write(2, error_to_string, my_strlen(error_to_string));

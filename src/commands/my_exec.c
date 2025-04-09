@@ -77,25 +77,14 @@ void launch_file(char ***envp, char **command_element, int *error_code)
 int check_binary(char *path)
 {
     int fd = open(path, O_RDONLY, 0);
-    char *buffer = malloc(sizeof(char) * 5);
     struct stat info;
 
     stat(path, &info);
     if (fd == -1 || !S_ISREG(info.st_mode)) {
-        free(buffer);
         return 1;
     }
-    my_memset(buffer, 0, 5);
-    read(fd, buffer, 4);
     close(fd);
-    if (my_strcmp("ELF", buffer + 1) == 0) {
-        free(buffer);
-        return 1;
-    }
-    write(2, path, my_strlen(path));
-    write(2, ": Exec format error. Binary file not executable.\n", 49);
-    free(buffer);
-    return 0;
+    return 1;
 }
 
 void my_exec(char ***envp, char *command,
