@@ -7,6 +7,7 @@
 
 #include "utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
 size_t count_lines(char *path)
@@ -20,6 +21,8 @@ size_t count_lines(char *path)
         return 0;
     while (getline(&line, &len, stream) != -1)
         total++;
+    if (line)
+        free(line);
     fclose(stream);
     return total;
 }
