@@ -11,7 +11,6 @@
 
 void my_free(void *ptr, ...)
 {
-    int i = 0;
     void *temp_data = ptr;
     va_list data_list;
 

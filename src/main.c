@@ -55,7 +55,6 @@ int mysh(char ***envp, int *error_code)
 int main(int ac, char **av, char **envp)
 {
     int mysh_exit_status = 0;
-    int mysh_tty_exit_status = 0;
     char **env = NULL;
     int error_code = 0;
 

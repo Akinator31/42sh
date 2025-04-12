@@ -54,7 +54,6 @@ void cd_to_directory(char ***envp,
     char *path = NULL;
     char *current_directory = get_environ_variable_value(envp, "PWD");
     char *old_directory = get_environ_variable_value(envp, "OLDPWD");
-    char *directory = NULL;
 
     if (is_variable)
         path = get_environ_variable_value(envp, path_to_directory);

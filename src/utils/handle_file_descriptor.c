@@ -16,7 +16,7 @@ void close_fds(int nb_elements, ...)
     va_list args;
 
     va_start(args, nb_elements);
-    for (size_t i = 0; i < nb_elements; i++)
+    for (size_t i = 0; i < (size_t)nb_elements; i++)
         close(va_arg(args, int));
     va_end(args);
 }

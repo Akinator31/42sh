@@ -84,7 +84,7 @@ bool error_nb_args(char ***envp, bool is_correct_cmd,
     return true;
 }
 
-bool is_correct_arguments(char *name, char *value)
+bool is_correct_arguments(char *name)
 {
     int i = 0;
 
