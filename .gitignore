@@ -1,0 +1,25 @@
+# IDE FILES
+.vscode
+.idea
+.cache
+.DS_Store
+compile_commands.json
+
+# BINARY FILES
+*.o
+*.a
+*.log
+42sh
+debug
+
+# BUILD FOLDER
+build
+build-debug
+build-tests
+
+# UNIT TESTS BINARY
+test_42_sh
+*.html
+*.gcno
+*.gcda
+coverage/
