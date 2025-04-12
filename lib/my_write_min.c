@@ -9,14 +9,13 @@
 #include <unistd.h>
 #include "my_lib.h"
 
-void my_write_min(char *str, int output)
+void my_write_min(const char *str, int fd)
 {
-    char *string = my_strdup(str);
-
-    for (int i = 0; string[i] != '\0'; i++)
-        string[i] += 32;
-    for (int i = 0; string[i] != '\0'; i++)
-        write(output, &string[i], 1);
-    write(output, "\0", 1);
-    free(string);
+    for (int i = 0; str[i] != '\0'; i++) {
+        char c = str[i];
+        if (c >= 'A' && c <= 'Z') {
+            c += 32;
+        }
+        write(fd, &c, 1);
+    }
 }

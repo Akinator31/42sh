@@ -35,34 +35,46 @@ Test(is_cd_command, is_cd_command_false)
 {
     char **env = duplicate_2d_char_array(environ, get_2d_arr_len(environ));
     int error_code = 1;
-    exit_status_t *status;
+    exit_status_t *status = malloc(sizeof(exit_status_t));
+    if (status == NULL)
+        cr_assert_fail("Memory allocation for status failed");
 
     cr_assert_eq(is_cd_command(&env, "ls", status, &error_code), false);
+    free(status);
 }
 
 Test(is_cd_command, is_cd_command_true)
 {
     char **env = duplicate_2d_char_array(environ, get_2d_arr_len(environ));
     int error_code = 1;
-    exit_status_t *status;
+    exit_status_t *status = malloc(sizeof(exit_status_t));
+    if (status == NULL)
+        cr_assert_fail("Memory allocation for status failed");;
 
     cr_assert_eq(is_cd_command(&env, "cd", status, &error_code), true);
+    free(status);
 }
 
 Test(is_env_command, is_env_command_false)
 {
     char **env = duplicate_2d_char_array(environ, get_2d_arr_len(environ));
     int error_code = 1;
-    exit_status_t *status;
+    exit_status_t *status = malloc(sizeof(exit_status_t));
+    if (status == NULL)
+        cr_assert_fail("Memory allocation for status failed");
 
     cr_assert_eq(is_env_command(&env, "ls", status, &error_code), false);
+    free(status);
 }
 
 Test(is_env_command, is_env_command_true)
 {
     char **env = duplicate_2d_char_array(environ, get_2d_arr_len(environ));
     int error_code = 1;
-    exit_status_t *status;
+    exit_status_t *status = malloc(sizeof(exit_status_t));
+    if (status == NULL)
+        cr_assert_fail("Memory allocation for status failed");
 
     cr_assert_eq(is_env_command(&env, "env", status, &error_code), true);
+    free(status);
 }

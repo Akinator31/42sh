@@ -24,7 +24,7 @@ char *my_strcpy(char *dest, char const *src);
 void my_putstr(char const *str, int output);
 int my_str_isalpha(char const *str);
 int my_isalpha(char c);
-void my_write_min(char *str, int output);
+void my_write_min(const char *str, int fd);
 char **str_to_word_array(const char *string, const char *separators);
 void *my_memcpy(void *dest, const void *src, size_t size);
 void *my_realloc(void *pointer, size_t memory_size, size_t original_size);

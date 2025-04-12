@@ -74,7 +74,7 @@ $(DEBUG_NAME): $(OBJ_DEBUG) $(LIB_OBJ)
 	@$(CC) -o $(DEBUG_NAME) $(OBJ_DEBUG) $(LIB_OBJ) $(DEBUG_FLAGS)
 	@echo "$(COLOR_GREEN)Debug build completed!$(COLOR_RESET)"
 
-$(TESTS_NAME): $(OBJ_TESTS)
+$(TESTS_NAME): $(OBJ_TESTS) $(LIB_OBJ)
 	@echo "$(COLOR_PURPLE)Linking $(TESTS_NAME)$(COLOR_RESET)"
 	@$(CC) -o $(TESTS_NAME) $(OBJ_TESTS) $(TEST_FLAGS)
 	@echo "$(COLOR_GREEN)Tests build completed!$(COLOR_RESET)"
