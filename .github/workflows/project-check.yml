@@ -149,7 +149,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ env.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa $(echo ${{ env.MIRROR_URL }} | cut -d':' -f1 | cut -d'@' -f2) >> ~/.ssh/known_hosts
+          ssh-keyscan -t rsa $(echo ${{ vars.MIRROR_URL }} | cut -d':' -f1 | cut -d'@' -f2) >> ~/.ssh/known_hosts
         env:
           SSH_KEY: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
 
@@ -166,6 +166,6 @@ jobs:
 
       - name: Push to mirror
         run: |
-          git remote add -f mirror ${{ env.MIRROR_URL }}
+          git remote add -f mirror ${{ vars.MIRROR_URL }}
           git push mirror --mirror --prune --force
-          echo "Successfully mirrored to ${{ env.MIRROR_URL }}"
+          echo "Successfully mirrored to ${{ vars.MIRROR_URL }}"
