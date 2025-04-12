@@ -11,8 +11,10 @@
 
 void my_write_min(const char *str, int fd)
 {
+    char c = 0;
+
     for (int i = 0; str[i] != '\0'; i++) {
-        char c = str[i];
+        c = str[i];
         if (c >= 'A' && c <= 'Z') {
             c += 32;
         }
