@@ -23,7 +23,7 @@
  */
 static int process_command(char *buffer, shell_context_t *ctx)
 {
-    int result_command;
+    int result_command = 0;
 
     if (!buffer)
         return EXIT;
