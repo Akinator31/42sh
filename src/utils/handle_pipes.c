@@ -49,7 +49,7 @@ static void execute_pipe(char ***envp, char **commands, int *error_code)
     int fd_in = STDIN_FILENO;
 
     for (int i = 0; commands[i] != NULL; i++) {
-        pipe(pipefd);
+        my_pipe(pipefd);
         pid = fork();
         handle_fork_error(pid);
         if (pid == 0) {

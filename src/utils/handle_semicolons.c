@@ -10,12 +10,16 @@
 #include "my_lib.h"
 #include "commands.h"
 #include "utils.h"
-
+#include <stdio.h>
 static void execute_semicolon(char ***envp, char *command, int *error_code)
 {
     int stdout_cpy = dup(STDOUT_FILENO);
     char **commands = str_to_word_array(command, ";\n\t");
 
+    if (stdout_cpy == -1) {
+        perror("dup");
+        exit(EXIT_FAILURE);
+    }
     for (int i = 0; commands[i] != NULL; i++) {
         analyse_command(envp, commands[i], error_code);
         dup2(stdout_cpy, STDOUT_FILENO);

@@ -39,5 +39,6 @@ void my_dup2(int oldfd, int newfd);
 struct tm *my_gettime(void);
 size_t count_lines(char *path);
 char *retrive_history_path(char ***envp);
+void my_pipe(int pipefd[2]);
 
 #endif
