@@ -10,11 +10,11 @@
 #include <stdlib.h>
 #include "utils.h"
 
-void my_pipe(int pipefd[2])
+int my_pipe(int pipefd[2])
 {
     if (pipe(pipefd) == -1) {
         perror("pipe has failed");
-        exit(EXIT_FAILURE);
+        return FAILURE;
     }
-    return;
+    return SUCCESS;
 }
