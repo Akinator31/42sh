@@ -2,11 +2,7 @@ name: project_check
 
 on:
   push:
-    branches-ignore:
-      - 'ga-ignore-*'
   pull_request:
-    branches-ignore:
-      - 'ga-ignore-*'
 
 jobs:
 
@@ -134,7 +130,7 @@ jobs:
 
   push_to_mirror:
     name: Push to a mirror repository
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.ref_name == 'main' }}
     needs: check_program_compilation
     runs-on: ubuntu-latest
 
