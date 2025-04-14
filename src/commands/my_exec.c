@@ -33,13 +33,15 @@ void exit_manager(int status, pid_t pid, int *error_code)
     kill(pid, 0);
 }
 
-void launch_binary(char ***envp, char *binary_path,
+int launch_binary(char ***envp, char *binary_path,
     char **command_element, int *error_code)
 {
     pid_t pid = fork();
     int exec_return = 0;
     int status = 0;
 
+    if (pid == -1)
+        return FAILURE;
     if (pid == 0) {
         exec_return = execve(binary_path, command_element, *envp);
         if (exec_return != 0) {
@@ -53,15 +55,17 @@ void launch_binary(char ***envp, char *binary_path,
         waitpid(pid, &status, 0);
         exit_manager(status, pid, error_code);
     }
-    return;
+    return SUCCESS;
 }
 
-void launch_file(char ***envp, char **command_element, int *error_code)
+int launch_file(char ***envp, char **command_element, int *error_code)
 {
     pid_t pid = fork();
     int exec_return = 0;
     int status = 0;
 
+    if (pid == -1)
+        return FAILURE;
     if (pid == 0) {
         exec_return = execve(command_element[0], command_element, *envp);
         errno_manager(exec_return, command_element);
@@ -71,7 +75,7 @@ void launch_file(char ***envp, char **command_element, int *error_code)
         waitpid(pid, &status, 0);
         exit_manager(status, pid, error_code);
     }
-    return;
+    return SUCCESS;
 }
 
 int check_binary(char *path)
@@ -87,25 +91,38 @@ int check_binary(char *path)
     return 1;
 }
 
-void my_exec(char ***envp, char *command,
+static int run_binary(
+    char **command_element,
+    int *error_code)
+{
+    if (!check_binary(command_element[0])) {
+        *error_code = 84;
+        return SUCCESS;
+    }
+    return FAILURE;
+}
+
+int my_exec(char ***envp, char *command,
     exit_status_t *status, int *error_code)
 {
     char **command_element = str_to_word_array(command, " \n\t");
     char *binary_path = get_binary(envp, command);
 
     if (!binary_path || command[0] == '.') {
-        if (!check_binary(command_element[0])) {
-            *error_code = 84;
-            return;
-        }
-        launch_file(envp, command_element, error_code);
+        if (run_binary(command_element, error_code) == SUCCESS)
+            return SUCCESS;
+        if (launch_file(envp, command_element, error_code) == FAILURE)
+            return FAILURE;
     } else {
         if (!check_binary(binary_path)) {
             *error_code = 84;
-            return;
+            return SUCCESS;
         }
-        launch_binary(envp, binary_path, command_element, error_code);
+        if (launch_binary(envp, binary_path,
+            command_element, error_code) == FAILURE)
+            return FAILURE;
     }
     if (binary_path)
         free(binary_path);
+    return SUCCESS;
 }
