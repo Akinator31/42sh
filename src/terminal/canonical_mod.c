@@ -15,6 +15,14 @@
 #include "utils.h"
 #include "canonical_mod.h"
 
+/**
+  * Initialize the terminal session
+  * @param line Line buffer structure
+  * @param history History structure
+  * @param envp Environment variables
+  * @param original Original terminal settings
+  * @return 0 on success, -1 on failure
+*/
 static int init_canonical(
     line_buffer_t *line,
     history_t *history,
@@ -30,6 +38,14 @@ static int init_canonical(
     return 0;
 }
 
+/**
+  * Process input character
+  * @param c Input character
+  * @param line Line buffer structure
+  * @param history History structure
+  * @param envp Environment variables
+  * @return 1 if exit condition met, 0 otherwise
+*/
 void input_loop(line_buffer_t *line, history_t *history, char ***envp)
 {
     char c = 0;
@@ -41,6 +57,10 @@ void input_loop(line_buffer_t *line, history_t *history, char ***envp)
     }
 }
 
+/**
+  * Handle input in canonical mode
+  * @param envp Environment variables
+*/
 void handle_input(char ***envp)
 {
     line_buffer_t line = {0};
@@ -56,6 +76,14 @@ void handle_input(char ***envp)
     cleanup_session(&line, &history, &original);
 }
 
+/**
+  * Handle newline character
+  * @param line Line buffer structure
+  * @param history History structure
+  * @param original Original terminal settings
+  * @param envp Environment variables
+  * @return Input string on success, NULL on failure
+*/
 static char *handle_newline(line_buffer_t *line, history_t *history,
     struct termios *original, char ***envp)
 {
@@ -72,12 +100,25 @@ static char *handle_newline(line_buffer_t *line, history_t *history,
     return NULL;
 }
 
+/**
+  * Handle escape sequence
+  * @param line Line buffer structure
+  * @param history History structure
+  * @param envp Environment variables
+  * @return 0 on success, -1 on failure
+*/
 static void handle_backspace(line_buffer_t *line, char ***envp)
 {
     line_process_backspace(line);
     redraw_line(line, *envp);
 }
 
+/**
+  * Process normal character input
+  * @param c Input character
+  * @param line Line buffer structure
+  * @param envp Environment variables
+*/
 static int process_canonical_char(
     char c,
     terminal_context_t *ctx,
@@ -104,6 +145,13 @@ static int process_canonical_char(
     return 0;
 }
 
+/**
+  * Process input character in canonical mode
+  * @param c Input character
+  * @param ctx Terminal context structure
+  * @param input Pointer to store the input string
+  * @return 1 if exit condition met, 0 otherwise
+*/
 char *canonical_input(char ***envp)
 {
     line_buffer_t line = {0};

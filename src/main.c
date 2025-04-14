@@ -103,26 +103,6 @@ static int init_shell_context(
 }
 
 /**
- * Handle the output of a command
- * @param result_command The result of the command execution
- * @param buffer The command buffer
- * @param envp Pointer to environment variables
- * @return 0 on success, EXIT on exit command
- */
-int handle_output_command(int result_command, char *buffer, char ***envp)
-{
-    if (result_command == EXIT) {
-        free(buffer);
-        return EXIT;
-    }
-    if (result_command == NORMAL && isatty(STDIN_FILENO))
-        print_prompt(*envp);
-    if (result_command == NOTHING)
-        return 0;
-    return 0;
-}
-
-/**
  * Main shell function
  * @param envp Pointer to environment variables
  * @param error_code Pointer to store error code

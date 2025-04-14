@@ -12,6 +12,12 @@
 #include <stdio.h>
 #include <sys/termios.h>
 
+/**
+ * Initialize the terminal session
+ * @param line Line buffer structure
+ * @param history History structure
+ * @param envp Environment variables
+ */
 void initialize_session(line_buffer_t *line, history_t *history,
     char ***envp)
 {
@@ -19,6 +25,12 @@ void initialize_session(line_buffer_t *line, history_t *history,
     history_init(history, envp);
 }
 
+/**
+ * Cleanup the terminal session
+ * @param line Line buffer structure
+ * @param history History structure
+ * @param original Original terminal settings
+ */
 void cleanup_session(line_buffer_t *line, history_t *history,
     struct termios *original)
 {
@@ -27,6 +39,14 @@ void cleanup_session(line_buffer_t *line, history_t *history,
     history_free(history);
 }
 
+/**
+ * Setup the terminal for raw mode
+ * @param original Original terminal settings
+ * @param line Line buffer structure
+ * @param history History structure
+ * @param envp Environment variables
+ * @return 0 on success, -1 on failure
+ */
 int setup_terminal(struct termios *original, line_buffer_t *line,
     history_t *history, char **envp)
 {

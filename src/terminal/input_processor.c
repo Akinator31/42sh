@@ -11,6 +11,13 @@
 #include <stdio.h>
 #include <unistd.h>
 
+/**
+  * Handle arrow keys for navigation in the line buffer
+  * @param seq Escape sequence for arrow keys
+  * @param line Line buffer structure
+  * @param history History structure
+  * @param envp Environment variables
+*/
 static void process_special_key(char c, line_buffer_t *line,
     history_t *history, char ***envp)
 {

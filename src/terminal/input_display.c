@@ -12,6 +12,11 @@
 #include "line_buffer.h"
 #include "utils.h"
 
+/**
+  * Redraw the line buffer on the terminal
+  * @param line Line buffer structure
+  * @param envp Environment variables
+*/
 void redraw_line(line_buffer_t *line, char **envp)
 {
     int i = 0;
@@ -29,6 +34,13 @@ void redraw_line(line_buffer_t *line, char **envp)
     fflush(stdout);
 }
 
+/**
+  * Handle arrow keys for navigation in the line buffer
+  * @param seq Escape sequence for arrow keys
+  * @param line Line buffer structure
+  * @param history History structure
+  * @param envp Environment variables
+*/
 void handle_arrow_keys(char seq[2], line_buffer_t *line,
     history_t *history, char **envp)
 {
