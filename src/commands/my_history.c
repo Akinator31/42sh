@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** B-PSU-200-TLS-2-1-minishell1-kevin.salanier
+** B-PSU-200 : 42sh
 ** File description:
 ** my_history
 */
@@ -97,7 +97,7 @@ void my_write_history(char *line, char ***envp)
     if (!check_first_char(line[0]))
         return;
     len = count_lines(history_file_path);
-    if (fprintf(stream, "\t%ld\t%d:%d\t%s",
+    if (fprintf(stream, "\t%ld\t%d:%d\t%s\n",
         len, time->tm_hour, time->tm_min, line) < 0)
         perror("Can't write into history file");
     fclose(stream);
