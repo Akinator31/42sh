@@ -35,8 +35,10 @@ void cleanup_session(line_buffer_t *line, history_t *history,
     struct termios *original)
 {
     disable_raw_mode(original);
-    line_buffer_free(line);
-    history_free(history);
+    if (line)
+        line_buffer_free(line);
+    if (history)
+        history_free(history);
 }
 
 /**

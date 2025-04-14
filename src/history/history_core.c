@@ -11,10 +11,14 @@
 
 void history_free(history_t *history)
 {
+    if (history == NULL || history->lines == NULL)
+        return;
     for (size_t i = 0; i < history->count; i++) {
-        free(history->lines[i]);
+        if (history->lines[i] != NULL)
+            free(history->lines[i]);
     }
-    free(history->lines);
+    if (history->lines != NULL)
+        free(history->lines);
     history->lines = NULL;
 }
 
