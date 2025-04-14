@@ -13,7 +13,7 @@
 #include "mysh.h"
 #include "utils.h"
 #include "commands.h"
-#include "canonique_mod.h"
+#include "canonical_mod.h"
 
 /**
  * Process a command line input

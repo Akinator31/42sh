@@ -6,6 +6,7 @@
 */
 
 #include "history.h"
+#include <stddef.h>
 
 void history_previous(history_t *history, line_buffer_t *line)
 {
@@ -17,9 +18,9 @@ void history_previous(history_t *history, line_buffer_t *line)
 
 void history_next(history_t *history, line_buffer_t *line)
 {
-    if (history->current_index < history->count) {
+    if ((size_t)history->current_index < history->count) {
         history->current_index++;
-        if (history->current_index == history->count) {
+        if ((size_t)history->current_index == history->count) {
             line->buffer[0] = '\0';
             line->length = 0;
             line->position = 0;

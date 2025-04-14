@@ -7,7 +7,7 @@
 
 #include "history.h"
 #include "utils.h"
-#include "canonique_mod.h"
+#include "canonical_mod.h"
 #include <stdio.h>
 #include <unistd.h>
 

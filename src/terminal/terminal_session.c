@@ -8,7 +8,7 @@
 #include "history.h"
 #include "line_buffer.h"
 #include "utils.h"
-#include "canonique_mod.h"
+#include "canonical_mod.h"
 #include <stdio.h>
 #include <sys/termios.h>
 

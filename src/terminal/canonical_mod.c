@@ -13,7 +13,7 @@
 #include "line_buffer.h"
 #include "history.h"
 #include "utils.h"
-#include "canonique_mod.h"
+#include "canonical_mod.h"
 
 static int init_canonical(
     line_buffer_t *line,
