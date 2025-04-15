@@ -30,7 +30,7 @@ static int count_parenthesis(
         if (left_parenthesis > right_parenthesis)
             write(2, "Too many )'s\n", 14);
         if (left_parenthesis < right_parenthesis)
-            write(2, "Too many \('s\n", 15);
+            write(2, "Too many \('s\n", 14);
         return 1;
     }
     return 0;
@@ -43,9 +43,5 @@ int handle_parenthesis(
 {
     if (count_parenthesis(command, envp, error_code))
         return 1;
-    if (my_strstr(command, "(")) {
-        check_valid_subshell(command, envp, error_code);
-        return 0;
-    }
     return 1;
 }
