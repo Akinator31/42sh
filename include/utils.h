@@ -39,5 +39,12 @@ void my_dup2(int oldfd, int newfd);
 struct tm *my_gettime(void);
 size_t count_lines(char *path);
 char *retrive_history_path(char ***envp);
+char **handle_command(char *command);
+int skip_inhib(char *str);
+int get_inhib_len(char *str);
+char **my_str_to_word_array_inhib(char *str, char *delim_list,
+    int nb_inhib);
+char *get_inhib_content(char *command);
+int search_inhib(char *command);
 
 #endif

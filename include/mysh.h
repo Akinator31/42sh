@@ -10,6 +10,7 @@
     #include <stdbool.h>
     #define IS_A_TTY_OFFSET -10
     #define IS_NOT_A_TTY_OFFSET 0
+    #define INIBITHORS_CHAR 39
 
 typedef enum {
     NORMAL,
