@@ -35,15 +35,10 @@ void print_prompt(char **envp)
 
     if (my_strstr(current_dir, home) != NULL) {
         print_hostname();
-        write(1, ":~\033[1;37m", 10);
-        write(1, current_dir + my_strlen(home),
-            my_strlen(current_dir + my_strlen(home)));
-        write(1, "\033[0;37m> ", 10);
+        printf(":~\033[1;37m%s\033[0;37m> ", current_dir + strlen(home));
     } else {
         print_hostname();
-        write(1, ":\033[1;37m", 9);
-        write(1, current_dir, my_strlen(current_dir));
-        write(1, "\033[0;37m> ", 10);
+        printf(":\033[1;37m%s\033[0;37m> ", current_dir);
     }
     free(home);
     free(current_dir);

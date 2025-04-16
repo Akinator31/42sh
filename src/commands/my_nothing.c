@@ -11,16 +11,17 @@
 #include "mysh.h"
 #include "commands.h"
 #include "my_lib.h"
-#include "utils.h"
 
 bool is_nothing(char ***envp, char *command,
     exit_status_t *status, int *error_code)
 {
-    if (my_strlen(command) == 1) {
-        if (isatty(STDIN_FILENO))
-            print_prompt(*envp);
+    char **command_element = str_to_word_array(command, " \t\n");
+
+    if (get_2d_arr_len(command_element) == 0) {
         *status = NOTHING;
+        free_2d_array_of_char(command_element);
         return true;
     }
+    free_2d_array_of_char(command_element);
     return false;
 }

@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** minishell_1
+** B-PSU-200 : 42sh
 ** File description:
 ** commands
 */
@@ -9,6 +9,8 @@
     #define INCLUDED_COMMANDS_H
     #include <stdbool.h>
     #include "mysh.h"
+
+int handle_output_command(int result_command, char *buffer, char ***envp);
 
 bool is_exit_command(char ***envp, char *command,
     exit_status_t *status, int *error_code);
