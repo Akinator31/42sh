@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *retrive_history_path(char ***envp)
+char *retrieve_history_path(char ***envp)
 {
     char *homepath = get_environ_variable_value(envp, "HOME");
     char *logpath = NULL;

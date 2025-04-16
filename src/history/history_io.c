@@ -69,7 +69,7 @@ static void read_history_content(history_t *history, FILE *file)
 
 void history_load(history_t *history, char ***envp)
 {
-    char *history_path = retrive_history_path(envp);
+    char *history_path = retrieve_history_path(envp);
     FILE *file = NULL;
 
     if (!history_path)
