@@ -25,8 +25,6 @@ void redraw_line(line_buffer_t *line, char **envp);
 void handle_arrow_keys(char seq[2], line_buffer_t *line,
     history_t *history, char **envp);
 void process_ctrl_keys(char c, line_buffer_t *line, int *should_exit);
-void redraw_line(line_buffer_t *line, char **envp);
-
 void initialize_session(line_buffer_t *line, history_t *history,
     char ***envp);
 void cleanup_session(line_buffer_t *line, history_t *history,
@@ -34,7 +32,6 @@ void cleanup_session(line_buffer_t *line, history_t *history,
 int setup_terminal(struct termios *original, line_buffer_t *line,
     history_t *history, char **envp);
 void process_normal_char(char c, line_buffer_t *line, char ***envp);
-void process_ctrl_keys(char c, line_buffer_t *line, int *should_exit);
 int process_input_char(char c, line_buffer_t *line,
     history_t *history, char ***envp);
 char *canonical_input(char ***envp);
