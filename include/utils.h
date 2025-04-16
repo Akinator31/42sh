@@ -9,6 +9,7 @@
     #define INCLUDED_UTILS_H
     #include <stdbool.h>
     #include <stddef.h>
+    #include "mysh.h"
 
 bool is_good_cmd(char *cmd, char *prompt);
 char *get_environ_var(const char *name, const char *value);
@@ -27,9 +28,9 @@ int change_dir(char *path_to_directory, char *current_directory,
 int change_directory_to_env(char *variable);
 int is_too_much_args(int nb_args, char **command_element, int *error_code);
 void errno_manager(int exec_return, char **command_element);
-void handle_simple_left_redirection(char *command);
-void handle_simple_right_redirection(char *command);
-void handle_double_right_redirection(char *command);
+int handle_simple_left_redirection(char *command, int *status);
+int handle_simple_right_redirection(char *command, int *status);
+int handle_double_right_redirection(char *command, int *status);
 int handle_pipes(char *command, char ***envp, int *error_code);
 int handle_semicolons(char *command, char ***envp, int *error_code);
 int duplicate_file_descriptor(int fd);
@@ -39,5 +40,6 @@ void my_dup2(int oldfd, int newfd);
 struct tm *my_gettime(void);
 size_t count_lines(char *path);
 char *retrieve_history_path(char ***envp);
+int check_meta_format(char *command, char *meta);
 
 #endif

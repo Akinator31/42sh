@@ -30,9 +30,12 @@ static int handle_metacharacters(char *command, char ***envp, int *error_code)
 {
     if (handle_semicolons(command, envp, error_code))
         return 1;
-    handle_double_right_redirection(command);
-    handle_simple_right_redirection(command);
-    handle_simple_left_redirection(command);
+    if (handle_double_right_redirection(command, error_code) == 0)
+        return 1;
+    if (handle_simple_right_redirection(command, error_code) == 0)
+        return 1;
+    if (handle_simple_left_redirection(command, error_code) == 0)
+        return 1;
     if (handle_pipes(command, envp, error_code))
         return 1;
     return 0;
