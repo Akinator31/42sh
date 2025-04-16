@@ -30,6 +30,12 @@ typedef struct {
     bool (*f)(char ***, char *, exit_status_t *, int *);
 } my_builtins_t;
 
+typedef struct shell_context_s {
+    char ***envp;
+    int *error_code;
+    int stdin_cpy;
+    int stdout_cpy;
+} shell_context_t;
 
 exit_status_t analyse_command(char ***evnp, char *command,
     int *error_code);

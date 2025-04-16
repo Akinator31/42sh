@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "my_lib.h"
 #include "commands.h"
 #include "mysh.h"
 #include "utils.h"

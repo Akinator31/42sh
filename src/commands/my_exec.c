@@ -93,6 +93,8 @@ void my_exec(char ***envp, char *command,
     char **command_element = handle_command(command);
     char *binary_path = get_binary(envp, command);
 
+    if (!get_2d_arr_len(command_element))
+        return;
     if (!binary_path || command[0] == '.') {
         if (!check_binary(command_element[0])) {
             *error_code = 84;
