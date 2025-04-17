@@ -7,6 +7,8 @@
 
 #include "history.h"
 #include "commands.h"
+#include "utils.h"
+#include <stddef.h>
 #include <stdlib.h>
 
 void history_free(history_t *history)
@@ -35,9 +37,16 @@ void history_add(history_t *history, const char *line, char ***envp)
 
 void history_init(history_t *history, char ***envp)
 {
-    history->lines = calloc(HISTORY_MAX, sizeof(char *));
+    char *filepath = retrieve_history_path(envp);
+    size_t total_lines = 0;
+
+    if (!filepath)
+        total_lines = HISTORY_MAX;
+    else
+        total_lines = count_lines(filepath);
+    history->lines = calloc(total_lines, sizeof(char *));
     history->count = 0;
-    history->capacity = HISTORY_MAX;
+    history->capacity = total_lines;
     history->current_index = 0;
     history_load(history, envp);
 }
