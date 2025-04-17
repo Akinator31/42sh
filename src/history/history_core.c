@@ -44,6 +44,7 @@ void history_init(history_t *history, char ***envp)
         total_lines = HISTORY_MAX;
     else
         total_lines = count_lines(filepath);
+    free(filepath);
     history->lines = calloc(total_lines, sizeof(char *));
     history->count = 0;
     history->capacity = total_lines;
