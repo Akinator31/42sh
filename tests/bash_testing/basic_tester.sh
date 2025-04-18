@@ -83,10 +83,12 @@ run_test_xml() {
 
     if diff -q "$TEST_DIR/42sh_all" "$TEST_DIR/tcsh_all" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
         PASS=$((PASS+1))
-        echo "<testcase name=\"$TEST_NAME\"/>" >> $RESULT_XML
+        escaped_test_name=$(echo "$TEST_NAME" | xml_escape)
+        echo "<testcase name=\"$escaped_test_name\">" >> $RESULT_XML
     else
         FAIL=$((FAIL+1))
-        echo "<testcase name=\"$TEST_NAME\">" >> $RESULT_XML
+        escaped_test_name=$(echo "$TEST_NAME" | xml_escape)
+        echo "<testcase name=\"$escaped_test_name\">" >> $RESULT_XML
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
         echo "$(echo "Command: $COMMAND" | xml_escape)" >> $RESULT_XML
         echo "$(echo "Shell Command executed: $COMMAND | $SH_42" | xml_escape)" >> $RESULT_XML
