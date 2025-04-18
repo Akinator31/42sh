@@ -80,49 +80,46 @@ run_test_xml() {
 
     cat "$TEST_DIR/42sh_output" "$TEST_DIR/42sh_error" > "$TEST_DIR/42sh_all"
     cat "$TEST_DIR/tcsh_output" "$TEST_DIR/tcsh_error" > "$TEST_DIR/tcsh_all"
-
+    echo "----------- START -----------"
     if diff -q "$TEST_DIR/42sh_all" "$TEST_DIR/tcsh_all" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
         PASS=$((PASS+1))
+        echo "Test passed: $TEST_NAME"
         escaped_test_name=$(echo "$TEST_NAME" | xml_escape)
-        echo "<testcase name=\"$escaped_test_name\">" >> $RESULT_XML
+        echo "<testcase name=\"$escaped_test_name\"/>" >> $RESULT_XML
+        echo "Test passed: $TEST_NAME" >> $RESULT_XML
     else
         FAIL=$((FAIL+1))
-        escaped_test_name=$(echo "$TEST_NAME" | xml_escape)
-        echo "<testcase name=\"$escaped_test_name\">" >> $RESULT_XML
-        echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
-        echo "$(echo "Command: $COMMAND" | xml_escape)" >> $RESULT_XML
-        echo "$(echo "Shell Command executed: $COMMAND | $SH_42" | xml_escape)" >> $RESULT_XML
-        echo "$(echo "Exit codes: 42sh=$EXIT_42, tcsh=$EXIT_TCSH" | xml_escape)" >> $RESULT_XML
-        echo "------ START ------"
+        echo "Test failed: $TEST_NAME"
         echo "Command: $COMMAND"
-        echo "Shell Command executed: $COMMAND | $SH_42"
         echo "Exit codes: 42sh=$EXIT_42, tcsh=$EXIT_TCSH"
-
         if [ $EXIT_42 -eq 124 ]; then
-            echo "$(echo "42sh timed out after ${TIMEOUT_DURATION}s" | xml_escape)" >> $RESULT_XML
             echo "42sh timed out after ${TIMEOUT_DURATION}s"
         fi
         if [ $EXIT_TCSH -eq 124 ]; then
-            echo "$(echo "tcsh timed out after ${TIMEOUT_DURATION}s" | xml_escape)" >> $RESULT_XML
             echo "tcsh timed out after ${TIMEOUT_DURATION}s"
         fi
 
-        echo "$(echo "Expected (tcsh - stdout + stderr):" | xml_escape)" >> $RESULT_XML
-        echo "Expected (tcsh - stdout + stderr):"
-        echo $(cat "$TEST_DIR/tcsh_all")
-        echo ""
-        echo "Got (42sh - stdout + stderr):"
-        echo $(cat "$TEST_DIR/42sh_all")
-        echo "------ END ------"
-        echo ""
+        escaped_test_name=$(echo "$TEST_NAME" | xml_escape)
+        echo "<testcase name=\"$escaped_test_name\">" >> $RESULT_XML
+        echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
+
+        echo "Expected (tcsh - stdout + stderr):" 
+        xml_escape < "$TEST_DIR/tcsh_all" 
+        echo "Expected (tcsh - stdout + stderr):" >> $RESULT_XML
         xml_escape < "$TEST_DIR/tcsh_all" >> $RESULT_XML
-        echo "" >> $RESULT_XML
-        echo "$(echo "Got (42sh - stdout + stderr):" | xml_escape)" >> $RESULT_XML
+        
+        echo ""
+        echo "Got (42sh - stdout + stderr):" 
+        xml_escape < "$TEST_DIR/42sh_all"
+        echo "Got (42sh - stdout + stderr):" >> $RESULT_XML
         xml_escape < "$TEST_DIR/42sh_all" >> $RESULT_XML
+
         echo "</failure>" >> $RESULT_XML
         echo "</testcase>" >> $RESULT_XML
     fi
+    echo "----------- END -----------"
 }
+
 
 if [ "$1" = "xml" ]; then
     RESULT_XML="test-results.xml"
