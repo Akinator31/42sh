@@ -118,7 +118,7 @@ run_test_xml() {
         echo "</failure>" >> $RESULT_XML
         echo "</testcase>" >> $RESULT_XML
     fi
-    echo "----------- END -----------"
+    echo "------------ END ------------"
     echo ""
 }
 
