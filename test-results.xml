@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite tests="0" failures="0">
+<testcase name="Simple echo"/>
+<testcase name="Multiple commands"/>
+<testcase name="Piping"/>
+<testcase name="Redirections">
+<failure message="Output mismatch or exit code">
+Command: echo test > /var/folders/qw/t0xghryx1910d59sz9g9qmnw0000gn/T/tmp.GamMwkgI9x/testfile && cat /var/folders/qw/t0xghryx1910d59sz9g9qmnw0000gn/T/tmp.GamMwkgI9x/testfile
+</failure>
+</testcase>
+<testcase name="Environment variables">
+<failure message="Output mismatch or exit code">
+Command: echo $HOME
+</failure>
+</testcase>
+<testcase name="Command substitution">
+<failure message="Output mismatch or exit code">
+Command: echo $(ls)
+</failure>
+</testcase>
+<testcase name="Aliases"/>
+<testcase name="Exit command">
+<failure message="Output mismatch or exit code">
+Command: exit 42
+</failure>
+</testcase>
+</testsuite>
