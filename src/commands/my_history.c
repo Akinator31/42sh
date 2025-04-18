@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2025
-** B-PSU-200-TLS-2-1-minishell1-kevin.salanier
+** B-PSU-200 : 42sh
 ** File description:
 ** my_history
 */
@@ -69,7 +69,7 @@ bool is_history_command(char ***envp, char *command,
 
     if (!is_good_cmd("history", command))
         return false;
-    logpath = retrive_history_path(envp);
+    logpath = retrieve_history_path(envp);
     if (!logpath)
         return false;
     stat(logpath, &sb);
@@ -84,7 +84,7 @@ bool is_history_command(char ***envp, char *command,
 
 void my_write_history(char *line, char ***envp)
 {
-    char *history_file_path = retrive_history_path(envp);
+    char *history_file_path = retrieve_history_path(envp);
     FILE *stream = NULL;
     size_t len = 0;
     struct tm *time = my_gettime();
@@ -97,7 +97,7 @@ void my_write_history(char *line, char ***envp)
     if (!check_first_char(line[0]))
         return;
     len = count_lines(history_file_path);
-    if (fprintf(stream, "\t%ld\t%d:%d\t%s",
+    if (fprintf(stream, "\t%ld\t%d:%d\t%s\n",
         len, time->tm_hour, time->tm_min, line) < 0)
         perror("Can't write into history file");
     fclose(stream);

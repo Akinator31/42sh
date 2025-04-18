@@ -108,6 +108,8 @@ int my_exec(char ***envp, char *command,
     char **command_element = str_to_word_array(command, " \n\t");
     char *binary_path = get_binary(envp, command);
 
+    if (!get_2d_arr_len(command_element))
+        return;
     if (!binary_path || command[0] == '.') {
         if (run_binary(command_element, error_code) == SUCCESS)
             return SUCCESS;

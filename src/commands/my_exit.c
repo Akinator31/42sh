@@ -18,7 +18,6 @@ bool is_exit_command(char ***envp, char *command,
     if (my_strlen(command) <= 1)
         return false;
     if (is_good_cmd("exit", command)) {
-        write(1, "exit\n", 5);
         *status = EXIT;
         return true;
     }

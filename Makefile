@@ -89,7 +89,7 @@ show_test: tests_run
 	@firefox coverage/index.html
 
 clean:
-	@$(RM) wolf3D debug tests_wolf3D
+	@$(RM) -r $(BUILD_DIR) $(BUILD_DEBUG) $(BUILD_TESTS)
 	@echo "$(COLOR_GREEN)Object files cleaned!$(COLOR_RESET)"
 
 fclean: clean
