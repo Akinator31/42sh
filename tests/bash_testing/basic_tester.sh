@@ -5,40 +5,18 @@
 ## basic_tester
 ##
 
-# This file is part of the 42sh project.
-# Basic SH Test for the 42sh shell.
-
 #!/bin/bash
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
-PURPLE='\033[0;35m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-WHITE='\033[1;37m'
-LIGHT_GRAY='\033[0;37m'
-DARK_GRAY='\033[1;30m'
-LIGHT_BLUE='\033[1;34m'
-LIGHT_GREEN='\033[1;32m'
-LIGHT_CYAN='\033[1;36m'
-LIGHT_PURPLE='\033[1;35m'
-LIGHT_RED='\033[1;31m'
-LIGHT_YELLOW='\033[1;33m'
-LIGHT_WHITE='\033[1;37m'
-DARK_YELLOW='\033[0;33m'
-DARK_GREEN='\033[0;32m'
-DARK_CYAN='\033[0;36m'
-DARK_PURPLE='\033[0;35m'
-DARK_RED='\033[0;31m'
-DARK_BLUE='\033[0;34m'
-DARK_GRAY='\033[1;30m'
-DARK_WHITE='\033[1;37m'
 YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 PASS=0
 FAIL=0
 TOTAL=0
+TIMEOUT_DURATION=60
 
 SH_42="./42sh"
 SH_TCSH="/bin/tcsh"
@@ -46,44 +24,42 @@ SH_TCSH="/bin/tcsh"
 TEST_DIR=$(mktemp -d)
 trap 'rm -rf "$TEST_DIR"' EXIT
 
-# To visualize the test results
 run_test() {
     TEST_NAME=$1
     COMMAND=$2
     TOTAL=$((TOTAL+1))
-    
+
     echo "${YELLOW}Running test: ${TEST_NAME}${NC}"
     echo "${CYAN}Shell Command executed: ${COMMAND} | ${SH_42}${NC}"
-    
+
     echo "$COMMAND" > "$TEST_DIR/input"
-    $SH_42 < "$TEST_DIR/input" > "$TEST_DIR/42sh_output" 2> "$TEST_DIR/42sh_error"
+    timeout $TIMEOUT_DURATION $SH_42 < "$TEST_DIR/input" > "$TEST_DIR/42sh_output" 2> "$TEST_DIR/42sh_error"
     EXIT_42=$?
-    $SH_TCSH < "$TEST_DIR/input" > "$TEST_DIR/tcsh_output" 2> "$TEST_DIR/tcsh_error"
+    timeout $TIMEOUT_DURATION $SH_TCSH < "$TEST_DIR/input" > "$TEST_DIR/tcsh_output" 2> "$TEST_DIR/tcsh_error"
     EXIT_TCSH=$?
-    
-    if diff -q "$TEST_DIR/42sh_output" "$TEST_DIR/tcsh_output" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
+
+    cat "$TEST_DIR/42sh_output" "$TEST_DIR/42sh_error" > "$TEST_DIR/42sh_all"
+    cat "$TEST_DIR/tcsh_output" "$TEST_DIR/tcsh_error" > "$TEST_DIR/tcsh_all"
+
+    if [ $EXIT_42 -eq 124 ]; then echo "${RED}✗ 42sh timed out after ${TIMEOUT_DURATION}s${NC}"; fi
+    if [ $EXIT_TCSH -eq 124 ]; then echo "${RED}✗ tcsh timed out after ${TIMEOUT_DURATION}s${NC}"; fi
+
+    if diff -q "$TEST_DIR/42sh_all" "$TEST_DIR/tcsh_all" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
         echo "${GREEN}✓ Test passed!${NC}"
         PASS=$((PASS+1))
     else
         echo "${RED}✗ Test failed!${NC}"
         echo "Command: $COMMAND"
         echo "Exit codes: 42sh=$EXIT_42, tcsh=$EXIT_TCSH"
-        echo "${YELLOW}42sh output:${NC}"
-        echo "STDOUT:"
-        cat "$TEST_DIR/42sh_output"
-        echo "STDERR:"
-        cat "$TEST_DIR/42sh_error"
-        echo "${YELLOW}tcsh output:${NC}"
-        echo "STDOUT:"
-        cat "$TEST_DIR/tcsh_output"
-        echo "STDERR:"
-        cat "$TEST_DIR/tcsh_error"
+        echo "${YELLOW}42sh output (stdout + stderr):${NC}"
+        cat "$TEST_DIR/42sh_all"
+        echo "${YELLOW}tcsh output (stdout + stderr):${NC}"
+        cat "$TEST_DIR/tcsh_all"
         FAIL=$((FAIL+1))
     fi
     echo ""
 }
 
-# To visualize the test results in XML format
 xml_escape() {
     sed -e 's/&/\&amp;/g' \
         -e 's/</\&lt;/g' \
@@ -98,12 +74,15 @@ run_test_xml() {
     TOTAL=$((TOTAL+1))
 
     echo "$COMMAND" > "$TEST_DIR/input"
-    $SH_42 < "$TEST_DIR/input" > "$TEST_DIR/42sh_output" 2> "$TEST_DIR/42sh_error"
+    timeout $TIMEOUT_DURATION $SH_42 < "$TEST_DIR/input" > "$TEST_DIR/42sh_output" 2> "$TEST_DIR/42sh_error"
     EXIT_42=$?
-    $SH_TCSH < "$TEST_DIR/input" > "$TEST_DIR/tcsh_output" 2> "$TEST_DIR/tcsh_error"
+    timeout $TIMEOUT_DURATION $SH_TCSH < "$TEST_DIR/input" > "$TEST_DIR/tcsh_output" 2> "$TEST_DIR/tcsh_error"
     EXIT_TCSH=$?
 
-    if diff -q "$TEST_DIR/42sh_output" "$TEST_DIR/tcsh_output" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
+    cat "$TEST_DIR/42sh_output" "$TEST_DIR/42sh_error" > "$TEST_DIR/42sh_all"
+    cat "$TEST_DIR/tcsh_output" "$TEST_DIR/tcsh_error" > "$TEST_DIR/tcsh_all"
+
+    if diff -q "$TEST_DIR/42sh_all" "$TEST_DIR/tcsh_all" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
         PASS=$((PASS+1))
         echo "<testcase name=\"$TEST_NAME\"/>" >> $RESULT_XML
     else
@@ -112,11 +91,19 @@ run_test_xml() {
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
         echo "$(echo "Command: $COMMAND" | xml_escape)" >> $RESULT_XML
         echo "$(echo "Shell Command executed: $COMMAND | $SH_42" | xml_escape)" >> $RESULT_XML
-        echo "$(echo "Expected (tcsh):" | xml_escape)" >> $RESULT_XML
-        xml_escape < "$TEST_DIR/tcsh_output" >> $RESULT_XML
+
+        if [ $EXIT_42 -eq 124 ]; then
+            echo "$(echo "42sh timed out after ${TIMEOUT_DURATION}s" | xml_escape)" >> $RESULT_XML
+        fi
+        if [ $EXIT_TCSH -eq 124 ]; then
+            echo "$(echo "tcsh timed out after ${TIMEOUT_DURATION}s" | xml_escape)" >> $RESULT_XML
+        fi
+
+        echo "$(echo "Expected (tcsh - stdout + stderr):" | xml_escape)" >> $RESULT_XML
+        xml_escape < "$TEST_DIR/tcsh_all" >> $RESULT_XML
         echo "" >> $RESULT_XML
-        echo "$(echo "Got (42sh):" | xml_escape)" >> $RESULT_XML
-        xml_escape < "$TEST_DIR/42sh_output" >> $RESULT_XML
+        echo "$(echo "Got (42sh - stdout + stderr):" | xml_escape)" >> $RESULT_XML
+        xml_escape < "$TEST_DIR/42sh_all" >> $RESULT_XML
         echo "</failure>" >> $RESULT_XML
         echo "</testcase>" >> $RESULT_XML
     fi
