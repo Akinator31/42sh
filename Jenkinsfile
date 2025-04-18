@@ -15,6 +15,7 @@ pipeline {
     }
     post {
         always {
+            junit 'test-results.xml'
             archiveArtifacts artifacts: '**/testfile', allowEmptyArchive: true
         }
         success {
