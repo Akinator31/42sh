@@ -103,7 +103,15 @@ run_test_xml() {
         FAIL=$((FAIL+1))
         echo "<testcase name=\"$TEST_NAME\">" >> $RESULT_XML
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
+
         echo "Command: $COMMAND" >> $RESULT_XML
+        echo "Expected (tcsh):" >> $RESULT_XML
+        sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' "$TEST_DIR/tcsh_output" >> $RESULT_XML
+
+        echo "" >> $RESULT_XML
+        echo "Got (42sh):" >> $RESULT_XML
+        sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' "$TEST_DIR/42sh_output" >> $RESULT_XML
+
         echo "</failure>" >> $RESULT_XML
         echo "</testcase>" >> $RESULT_XML
     fi
