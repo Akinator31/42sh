@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 PASS=0
 FAIL=0
 TOTAL=0
-TIMEOUT_DURATION=60
+TIMEOUT_DURATION=30
 
 SH_42="./42sh"
 SH_TCSH="/bin/tcsh"
@@ -41,9 +41,6 @@ run_test() {
     cat "$TEST_DIR/42sh_output" "$TEST_DIR/42sh_error" > "$TEST_DIR/42sh_all"
     cat "$TEST_DIR/tcsh_output" "$TEST_DIR/tcsh_error" > "$TEST_DIR/tcsh_all"
 
-    if [ $EXIT_42 -eq 124 ]; then echo "${RED}✗ 42sh timed out after ${TIMEOUT_DURATION}s${NC}"; fi
-    if [ $EXIT_TCSH -eq 124 ]; then echo "${RED}✗ tcsh timed out after ${TIMEOUT_DURATION}s${NC}"; fi
-
     if diff -q "$TEST_DIR/42sh_all" "$TEST_DIR/tcsh_all" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
         echo "${GREEN}✓ Test passed!${NC}"
         PASS=$((PASS+1))
@@ -65,7 +62,9 @@ xml_escape() {
         -e 's/</\&lt;/g' \
         -e 's/>/\&gt;/g' \
         -e 's/"/\&quot;/g' \
-        -e "s/'/\&apos;/g"
+        -e "s/'/\&apos;/g" \
+        -e 's/\x0//g' \
+        -e 's/[^[:print:]\t\n\r]/_/g'
 }
 
 run_test_xml() {
@@ -82,6 +81,17 @@ run_test_xml() {
     cat "$TEST_DIR/42sh_output" "$TEST_DIR/42sh_error" > "$TEST_DIR/42sh_all"
     cat "$TEST_DIR/tcsh_output" "$TEST_DIR/tcsh_error" > "$TEST_DIR/tcsh_all"
 
+    if [ ! -s "$TEST_DIR/42sh_all" ]; then
+        echo "${RED}Error: 42sh output or error file is empty!${NC}"
+        FAIL=$((FAIL+1))
+        return
+    fi
+    if [ ! -s "$TEST_DIR/tcsh_all" ]; then
+        echo "${RED}Error: tcsh output or error file is empty!${NC}"
+        FAIL=$((FAIL+1))
+        return
+    fi
+
     if diff -q "$TEST_DIR/42sh_all" "$TEST_DIR/tcsh_all" > /dev/null && [ $EXIT_42 -eq $EXIT_TCSH ]; then
         PASS=$((PASS+1))
         echo "<testcase name=\"$TEST_NAME\"/>" >> $RESULT_XML
@@ -91,18 +101,27 @@ run_test_xml() {
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
         echo "$(echo "Command: $COMMAND" | xml_escape)" >> $RESULT_XML
         echo "$(echo "Shell Command executed: $COMMAND | $SH_42" | xml_escape)" >> $RESULT_XML
+        echo "Command: $COMMAND)"
+        echo "Shell Command executed: $COMMAND | $SH_42"
 
         if [ $EXIT_42 -eq 124 ]; then
             echo "$(echo "42sh timed out after ${TIMEOUT_DURATION}s" | xml_escape)" >> $RESULT_XML
+            echo "42sh timed out after ${TIMEOUT_DURATION}s"
         fi
         if [ $EXIT_TCSH -eq 124 ]; then
             echo "$(echo "tcsh timed out after ${TIMEOUT_DURATION}s" | xml_escape)" >> $RESULT_XML
+            echo "tcsh timed out after ${TIMEOUT_DURATION}s"
         fi
 
         echo "$(echo "Expected (tcsh - stdout + stderr):" | xml_escape)" >> $RESULT_XML
+        echo "Expected (tcsh - stdout + stderr):"
+        echo $(cat "$TEST_DIR/tcsh_all")
         xml_escape < "$TEST_DIR/tcsh_all" >> $RESULT_XML
         echo "" >> $RESULT_XML
+        echo ""
         echo "$(echo "Got (42sh - stdout + stderr):" | xml_escape)" >> $RESULT_XML
+        echo "Got (42sh - stdout + stderr):"
+        echo $(cat "$TEST_DIR/42sh_all")
         xml_escape < "$TEST_DIR/42sh_all" >> $RESULT_XML
         echo "</failure>" >> $RESULT_XML
         echo "</testcase>" >> $RESULT_XML
