@@ -12,7 +12,7 @@
 #include "my_lib.h"
 #include "utils.h"
 
-void handle_simple_left_redirection(char *command)
+int handle_simple_left_redirection(char *command)
 {
     int fd = 0;
     char *input_file = my_strstr(command, "<");
@@ -21,12 +21,14 @@ void handle_simple_left_redirection(char *command)
         *input_file = '\0';
         input_file = strtok(input_file + 1, " \n");
         fd = open(input_file, O_RDONLY);
-        my_dup2(fd, STDIN_FILENO);
+        if (my_dup2(fd, STDIN_FILENO) == FAILURE)
+            return FAILURE;
         close(fd);
     }
+    return SUCCESS;
 }
 
-void handle_simple_right_redirection(char *command)
+int handle_simple_right_redirection(char *command)
 {
     int fd = 0;
     char *output_file = my_strstr(command, ">");
@@ -35,12 +37,14 @@ void handle_simple_right_redirection(char *command)
         *output_file = '\0';
         output_file = strtok(output_file + 1, " \n");
         fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        my_dup2(fd, STDOUT_FILENO);
+        if (my_dup2(fd, STDOUT_FILENO) == FAILURE)
+            return FAILURE;
         close(fd);
     }
+    return SUCCESS;
 }
 
-void handle_double_right_redirection(char *command)
+int handle_double_right_redirection(char *command)
 {
     int fd = 0;
     char *output_file = my_strstr(command, ">>");
@@ -49,7 +53,9 @@ void handle_double_right_redirection(char *command)
         *output_file = '\0';
         output_file = strtok(output_file + 2, " \n");
         fd = open(output_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        my_dup2(fd, STDOUT_FILENO);
+        if (my_dup2(fd, STDOUT_FILENO) == FAILURE)
+            return FAILURE;
         close(fd);
     }
+    return SUCCESS;
 }

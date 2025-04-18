@@ -13,22 +13,26 @@
 #include <stdio.h>
 #include "commands.h"
 #include "my_lib.h"
-#include "utils.h"
+#include "../../include/utils.h"
 
-static void is_next_commands_not_null(char *commands, int pipefd[2])
+static int is_next_commands_not_null(char *commands, int pipefd[2])
 {
     if (commands != NULL) {
-        my_dup2(pipefd[STDOUT_FILENO], STDOUT_FILENO);
+        if (my_dup2(pipefd[STDOUT_FILENO], STDOUT_FILENO) == FAILURE)
+            return FAILURE;
         close(pipefd[STDOUT_FILENO]);
+        return SUCCESS;
     }
+    return SUCCESS;
 }
 
-static void handle_fork_error(pid_t pid)
+static int handle_fork_error(pid_t pid)
 {
     if (pid == -1) {
         perror("fork");
-        exit(EXIT_FAILURE);
+        return FAILURE;
     }
+    return SUCCESS;
 }
 
 int count_nb_pipe(char *command)
@@ -42,18 +46,17 @@ int count_nb_pipe(char *command)
     return nb_pipe;
 }
 
-static void execute_pipe(char ***envp, char **commands, int *error_code)
+static int execute_pipe(char ***envp, char **commands, int *error_code)
 {
     int pipefd[2];
     pid_t pid;
     int fd_in = STDIN_FILENO;
 
-    for (int i = 0; commands[i] != NULL; i++) {
-        pipe(pipefd);
+    for (int i = 0; commands[i] != NULL && my_pipe(pipefd) != FAILURE; i++) {
         pid = fork();
-        handle_fork_error(pid);
-        if (pid == 0) {
-            dup2(fd_in, STDIN_FILENO);
+        if (handle_fork_error(pid) == FAILURE)
+            return FAILURE;
+        if (pid == 0 && my_dup2(fd_in, STDIN_FILENO) != FAILURE) {
             is_next_commands_not_null(commands[i + 1], pipefd);
             analyse_command(envp, commands[i], error_code);
             exit(EXIT_SUCCESS);
@@ -63,6 +66,7 @@ static void execute_pipe(char ***envp, char **commands, int *error_code)
         }
     }
     waitpid(pid, NULL, 0);
+    return SUCCESS;
 }
 
 int handle_pipes(char *command, char ***envp, int *error_code)
@@ -79,7 +83,10 @@ int handle_pipes(char *command, char ***envp, int *error_code)
             write(2, "Invalid null command.\n", 22);
             return 1;
         }
-        execute_pipe(envp, commands, error_code);
+        if (execute_pipe(envp, commands, error_code) == FAILURE) {
+            free_2d_array_of_char(commands);
+            return FAILURE;
+        }
         free_2d_array_of_char(commands);
         return 1;
     }

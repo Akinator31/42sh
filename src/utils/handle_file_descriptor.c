@@ -32,8 +32,11 @@ int duplicate_file_descriptor(int fd)
     return fd_copy;
 }
 
-void restore_stdin_stdout_fd(int stdin_cpy, int stdout_cpy)
+int restore_stdin_stdout_fd(int stdin_cpy, int stdout_cpy)
 {
-    my_dup2(stdin_cpy, STDIN_FILENO);
-    my_dup2(stdout_cpy, STDOUT_FILENO);
+    if (my_dup2(stdin_cpy, STDIN_FILENO) == FAILURE)
+        return FAILURE;
+    if (my_dup2(stdout_cpy, STDOUT_FILENO) == FAILURE)
+        return FAILURE;
+    return SUCCESS;
 }
