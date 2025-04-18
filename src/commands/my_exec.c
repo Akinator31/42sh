@@ -102,27 +102,41 @@ static int run_binary(
     return FAILURE;
 }
 
+static int exec_binary_path(
+    char ***envp,
+    char *binary_path,
+    int *error_code,
+    char **command_element
+)
+{
+    if (!check_binary(binary_path)) {
+        *error_code = 84;
+        return SUCCESS;
+    }
+    if (launch_binary(envp, binary_path,
+        command_element, error_code) == FAILURE)
+        return FAILURE;
+    return SUCCESS;
+}
+
 int my_exec(char ***envp, char *command,
     exit_status_t *status, int *error_code)
 {
     char **command_element = str_to_word_array(command, " \n\t");
     char *binary_path = get_binary(envp, command);
+    int ret = 0;
 
     if (!get_2d_arr_len(command_element))
-        return;
+        return FAILURE;
     if (!binary_path || command[0] == '.') {
         if (run_binary(command_element, error_code) == SUCCESS)
             return SUCCESS;
         if (launch_file(envp, command_element, error_code) == FAILURE)
             return FAILURE;
     } else {
-        if (!check_binary(binary_path)) {
-            *error_code = 84;
-            return SUCCESS;
-        }
-        if (launch_binary(envp, binary_path,
-            command_element, error_code) == FAILURE)
-            return FAILURE;
+        ret = exec_binary_path(envp, binary_path, error_code, command_element);
+        if (ret != 0)
+            return ret;
     }
     if (binary_path)
         free(binary_path);
