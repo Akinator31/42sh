@@ -91,6 +91,7 @@ run_test_xml() {
         FAIL=$((FAIL+1))
         echo "Test failed: $TEST_NAME"
         echo "Command: $COMMAND"
+        echo "Execution test command : $COMMAND | $SH_42"
         echo "Exit codes: 42sh=$EXIT_42, tcsh=$EXIT_TCSH"
         if [ $EXIT_42 -eq 124 ]; then
             echo "42sh timed out after ${TIMEOUT_DURATION}s"
@@ -118,6 +119,7 @@ run_test_xml() {
         echo "</testcase>" >> $RESULT_XML
     fi
     echo "----------- END -----------"
+    echo ""
 }
 
 
