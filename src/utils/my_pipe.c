@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2025
-** B-PSU-200-TLS-2-1-minishell2-pavel.de-wavrechin
+** 42sh
 ** File description:
-** my_dup2
+** check pipes
 */
 
 #include <unistd.h>
@@ -10,10 +10,10 @@
 #include <stdlib.h>
 #include "utils.h"
 
-int my_dup2(int oldfd, int newfd)
+int my_pipe(int pipefd[2])
 {
-    if (dup2(oldfd, newfd) == -1) {
-        perror("dup2");
+    if (pipe(pipefd) == -1) {
+        perror("pipe has failed");
         return FAILURE;
     }
     return SUCCESS;
