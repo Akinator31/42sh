@@ -22,9 +22,9 @@ void print_hostname(void)
     if (!hostname_file)
         return;
     hostname_len = read(hostname_file, hostname, 253);
-    write(1, "\033[4;37m", 8);
-    write(1, hostname, hostname_len - 1);
-    write(1, "\033[0;37m", 8);
+    if (hostname_len <= 0)
+        return;
+    printf("\033[4;37m%.*s\033[0;37m", (int)(hostname_len - 1), hostname);
     close(hostname_file);
 }
 

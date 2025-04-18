@@ -10,6 +10,8 @@
     #include <stdbool.h>
     #include <stddef.h>
     #include "mysh.h"
+    #define FAILURE -1
+    #define SUCCESS 1
 
 bool is_good_cmd(char *cmd, char *prompt);
 char *get_environ_var(const char *name, const char *value);
@@ -34,11 +36,19 @@ int handle_double_right_redirection(char *command, int *status);
 int handle_pipes(char *command, char ***envp, int *error_code);
 int handle_semicolons(char *command, char ***envp, int *error_code);
 int duplicate_file_descriptor(int fd);
-void restore_stdin_stdout_fd(int stdin_cpy, int stdout_cpy);
+int restore_stdin_stdout_fd(int stdin_cpy, int stdout_cpy);
 void close_fds(int nb_elements, ...);
-void my_dup2(int oldfd, int newfd);
+int my_dup2(int oldfd, int newfd);
 struct tm *my_gettime(void);
 size_t count_lines(char *path);
+char **handle_command(char *command);
+int skip_inhib(char *str);
+int get_inhib_len(char *str);
+char **my_str_to_word_array_inhib(char *str, char *delim_list,
+    int nb_inhib);
+char *get_inhib_content(char *command);
+int search_inhib(char *command);
+int my_pipe(int pipefd[2]);
 char *retrieve_history_path(char ***envp);
 int check_meta_format(char *command, char *meta);
 

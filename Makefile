@@ -14,7 +14,8 @@ BUILD_TESTS 	=	build-tests
 INCLUDE_DIRS	=	include
 
 SRC          	=	$(shell find $(SRC_DIR) -name "*.c")
-TESTS        	=	$(shell find . -name "*.c" ! -name "main.c")
+TESTS        	=	$(shell find . -name "*.c" ! -name "main.c" \
+                        -not -path "*/bonus/*")
 LIB_SRC      	=	$(shell find $(LIB_DIR) -name "*.c")
 
 OBJ          	= 	$(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)

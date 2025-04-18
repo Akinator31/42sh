@@ -51,7 +51,8 @@ int handle_simple_right_redirection(char *command, int *status)
         *output_file = '\0';
         output_file = strtok(output_file + 1, " \n");
         fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        my_dup2(fd, STDOUT_FILENO);
+        if (my_dup2(fd, STDOUT_FILENO) == FAILURE)
+            return FAILURE;
         close(fd);
     }
     return 1;
@@ -70,7 +71,8 @@ int handle_double_right_redirection(char *command, int *status)
         *output_file = '\0';
         output_file = strtok(output_file + 2, " \n");
         fd = open(output_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-        my_dup2(fd, STDOUT_FILENO);
+        if (my_dup2(fd, STDOUT_FILENO) == FAILURE)
+            return FAILURE;
         close(fd);
     }
     return 1;
