@@ -150,10 +150,10 @@ if [ "$1" = "xml" ]; then
     run_test_xml "Quote handling" "echo 'Single quotes' \"Double quotes\""
 
     # === TCSH : setenv / unsetenv ===
-    run_test_xml "tcsh setenv basic" "setenv FOO bar; echo \$FOO"
-    run_test_xml "tcsh setenv overwrite" "setenv FOO bar; setenv FOO newval; echo \$FOO"
-    run_test_xml "tcsh unsetenv test" "setenv TEMP value; unsetenv TEMP; echo \$TEMP"
-    run_test_xml "tcsh unsetenv multiple" "setenv A x; setenv B y; unsetenv A B; echo \$A\$B"
+    run_test_xml "tcsh setenv basic" "setenv FOO bar; env | grep FOO"
+    run_test_xml "tcsh setenv overwrite" "setenv FOO bar; setenv FOO newval; env | grep FOO"
+    run_test_xml "tcsh unsetenv test" "setenv TEMP value; unsetenv TEMP; env | grep TEMP"
+    run_test_xml "tcsh unsetenv multiple" "setenv A x; setenv B y; unsetenv A B; env | grep A B"
     run_test_xml "tcsh setenv invalid args" "setenv"
     run_test_xml "tcsh unsetenv invalid args" "unsetenv"
 
