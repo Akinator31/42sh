@@ -111,6 +111,7 @@ run_test_xml() {
         echo "<testcase name=\"$TEST_NAME\">" >> $RESULT_XML
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
         echo "$(echo "Command: $COMMAND" | xml_escape)" >> $RESULT_XML
+        echo "$(echo "Shell Command executed: $COMMAND | $SH_42" | xml_escape)" >> $RESULT_XML
         echo "$(echo "Expected (tcsh):" | xml_escape)" >> $RESULT_XML
         xml_escape < "$TEST_DIR/tcsh_output" >> $RESULT_XML
         echo "" >> $RESULT_XML
@@ -133,6 +134,18 @@ if [ "$1" = "xml" ]; then
     run_test_xml "Command substitution" "echo \$(ls)"
     run_test_xml "Aliases" "alias ll='ls -l' && ll"
     run_test_xml "Exit command" "exit 42"
+    run_test_xml "Background process" "sleep 1 &"
+    run_test_xml "Conditional execution (success)" "true && echo success"
+    run_test_xml "Conditional execution (failure)" "false || echo failure"
+    run_test_xml "Input redirection" "cat < /etc/passwd | head -1"
+    run_test_xml "Here document" "cat << EOF\nHello\nWorld\nEOF"
+    run_test_xml "Variable assignment" "VAR=value; echo \$VAR"
+    run_test_xml "Command with arguments" "echo -n test"
+    run_test_xml "Complex piping" "ls -la | grep sh | sort -r | head -3"
+    run_test_xml "Multiple redirections" "cat < /etc/passwd > $TEST_DIR/out1 2> $TEST_DIR/err1"
+    run_test_xml "Directory navigation" "cd /tmp && pwd"
+    run_test_xml "Path execution" "/bin/echo testing path execution"
+    run_test_xml "Quote handling" "echo 'Single quotes' \"Double quotes\""
     echo '</testsuite>' >> $RESULT_XML
 else 
     run_test "Simple echo" "echo Hello World"
@@ -143,6 +156,18 @@ else
     run_test "Command substitution" "echo \$(ls)"
     run_test "Aliases" "alias ll='ls -l' && ll"
     run_test "Exit command" "exit 42"
+    run_test "Background process" "sleep 1 &"
+    run_test "Conditional execution (success)" "true && echo success"
+    run_test "Conditional execution (failure)" "false || echo failure"
+    run_test "Input redirection" "cat < /etc/passwd | head -1"
+    run_test "Here document" "cat << EOF\nHello\nWorld\nEOF"
+    run_test "Variable assignment" "VAR=value; echo \$VAR"
+    run_test "Command with arguments" "echo -n test"
+    run_test "Complex piping" "ls -la | grep sh | sort -r | head -3"
+    run_test "Multiple redirections" "cat < /etc/passwd > $TEST_DIR/out1 2> $TEST_DIR/err1"
+    run_test "Directory navigation" "cd /tmp && pwd"
+    run_test "Path execution" "/bin/echo testing path execution"
+    run_test "Quote handling" "echo 'Single quotes' \"Double quotes\""
 fi
 
 echo "${YELLOW}Test Results:${NC}"
