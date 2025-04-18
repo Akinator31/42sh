@@ -84,6 +84,13 @@ run_test() {
 }
 
 # To visualize the test results in XML format
+xml_escape() {
+    sed -e 's/&/\&amp;/g' \
+        -e 's/</\&lt;/g' \
+        -e 's/>/\&gt;/g' \
+        -e 's/"/\&quot;/g' \
+        -e "s/'/\&apos;/g"
+}
 
 run_test_xml() {
     TEST_NAME=$1
@@ -103,15 +110,12 @@ run_test_xml() {
         FAIL=$((FAIL+1))
         echo "<testcase name=\"$TEST_NAME\">" >> $RESULT_XML
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
-
-        echo "Command: $COMMAND" >> $RESULT_XML
-        echo "Expected (tcsh):" >> $RESULT_XML
-        sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' "$TEST_DIR/tcsh_output" >> $RESULT_XML
-
+        echo "$(echo "Command: $COMMAND" | xml_escape)" >> $RESULT_XML
+        echo "$(echo "Expected (tcsh):" | xml_escape)" >> $RESULT_XML
+        xml_escape < "$TEST_DIR/tcsh_output" >> $RESULT_XML
         echo "" >> $RESULT_XML
-        echo "Got (42sh):" >> $RESULT_XML
-        sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g' "$TEST_DIR/42sh_output" >> $RESULT_XML
-
+        echo "$(echo "Got (42sh):" | xml_escape)" >> $RESULT_XML
+        xml_escape < "$TEST_DIR/42sh_output" >> $RESULT_XML
         echo "</failure>" >> $RESULT_XML
         echo "</testcase>" >> $RESULT_XML
     fi
@@ -119,8 +123,8 @@ run_test_xml() {
 
 if [ "$1" = "xml" ]; then
     RESULT_XML="test-results.xml"
-    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > $RESULT_XML
-    echo "<testsuite tests=\"$TOTAL\" failures=\"$FAIL\">" >> $RESULT_XML
+    echo '<?xml version="1.0" encoding="UTF-8"?>' > $RESULT_XML
+    echo '<testsuite name="42sh Tests">' >> $RESULT_XML
     run_test_xml "Simple echo" "echo Hello World"
     run_test_xml "Multiple commands" "ls -l ; echo done"
     run_test_xml "Piping" "ls | grep .sh"
@@ -129,7 +133,7 @@ if [ "$1" = "xml" ]; then
     run_test_xml "Command substitution" "echo \$(ls)"
     run_test_xml "Aliases" "alias ll='ls -l' && ll"
     run_test_xml "Exit command" "exit 42"
-    echo "</testsuite>" >> $RESULT_XML
+    echo '</testsuite>' >> $RESULT_XML
 else 
     run_test "Simple echo" "echo Hello World"
     run_test "Multiple commands" "ls -l ; echo done"
