@@ -64,7 +64,8 @@ xml_escape() {
         -e 's/"/\&quot;/g' \
         -e "s/'/\&apos;/g" \
         -e 's/\x0//g' \
-        -e 's/[^[:print:]\t\n\r]/_/g'
+        -e 's/[^[:print:]\t\n\r]/_/g' \
+        -e 's/\&amp;/\&amp;/g'
 }
 
 run_test_xml() {
