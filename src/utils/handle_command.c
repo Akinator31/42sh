@@ -29,7 +29,7 @@ int search_inhib(char *command)
     return nb_inib;
 }
 
-char **handle_command(char *command)
+static char **format_command(char *command)
 {
     int nb_inhib = search_inhib(command);
 
@@ -40,4 +40,12 @@ char **handle_command(char *command)
         return NULL;
     }
     return my_str_to_word_array_inhib(command, " \n\t", nb_inhib);
+}
+
+char **handle_command(char *command, char **env)
+{
+    char **command_array = format_command(command);
+
+    handle_env_var_call(command_array, env);
+    return command_array;
 }
