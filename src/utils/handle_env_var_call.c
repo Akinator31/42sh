@@ -12,8 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "my_lib.h"
-#include "commands.h"
-#include "mysh.h"
 #include "utils.h"
 
 static int get_index_var_env(char **command, char **env)
