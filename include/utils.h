@@ -53,5 +53,7 @@ char *retrieve_history_path(char ***envp);
 int check_meta_format(char *command, char *meta);
 int env_var_already_exist(char ***envp, const char *variable);
 void handle_env_var_call(char **command_array, char **env);
+bool my_strislowercase(char *str);
+bool my_strisuppercase(char *str);
 
 #endif

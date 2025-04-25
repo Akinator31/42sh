@@ -19,20 +19,17 @@
 static int get_index_var_env(char **command, char **env)
 {
     int index_env = env_var_already_exist(&env, command[0] + 1);
-    char *command_dup = NULL;
+    char *dup_command = NULL;
 
     if (index_env >= 0)
         return index_env;
-    command_dup = my_strdup(command[0]);
-    my_strlowcase(command_dup + 1);
-    index_env = env_var_already_exist(&env, command_dup + 1);
-    if (index_env >= 0) {
-        free(command_dup);
-        return index_env;
-    }
-    my_strupcase(command_dup + 1);
-    index_env = env_var_already_exist(&env, command_dup + 1);
-    free(command_dup);
+    dup_command = my_strdup(command[0]);
+    if (my_strislowercase(command[0] + 1))
+        my_strupcase(dup_command);
+    if (my_strisuppercase(command[0] + 1))
+        my_strlowcase(dup_command);
+    index_env = env_var_already_exist(&env, dup_command + 1);
+    free(dup_command);
     return index_env;
 }
 
