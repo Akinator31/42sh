@@ -41,7 +41,7 @@ void close_fds(int nb_elements, ...);
 int my_dup2(int oldfd, int newfd);
 struct tm *my_gettime(void);
 size_t count_lines(char *path);
-char **handle_command(char *command);
+char **handle_command(char *command, char **env);
 int skip_inhib(char *str);
 int get_inhib_len(char *str);
 char **my_str_to_word_array_inhib(char *str, char *delim_list,
@@ -51,5 +51,9 @@ int search_inhib(char *command);
 int my_pipe(int pipefd[2]);
 char *retrieve_history_path(char ***envp);
 int check_meta_format(char *command, char *meta);
+int env_var_already_exist(char ***envp, const char *variable);
+void handle_env_var_call(char **command_array, char **env);
+bool my_strislowercase(char *str);
+bool my_strisuppercase(char *str);
 
 #endif
