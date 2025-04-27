@@ -42,7 +42,8 @@ void line_process_backspace(line_buffer_t *line)
     line_display(line);
 }
 
-void line_process_enter(line_buffer_t *line, void *hist, char ***envp)
+void line_process_enter(line_buffer_t *line, void *hist, char ***envp,
+    config_rc_t *config)
 {
     history_t *history = (history_t *)hist;
     int stdin_cpy = duplicate_file_descriptor(STDIN_FILENO);
@@ -52,7 +53,8 @@ void line_process_enter(line_buffer_t *line, void *hist, char ***envp)
 
     if (line->length > 0) {
         history_add(history, line->buffer, envp);
-        result_command = analyse_command(envp, line->buffer, &error_code);
+        result_command = analyse_command(envp, line->buffer, &error_code,
+            config);
         restore_stdin_stdout_fd(stdin_cpy, stdout_cpy);
         if (handle_output_command(result_command, line->buffer, envp)) {
             close_fds(2, stdin_cpy, stdout_cpy);
