@@ -59,8 +59,10 @@ static char *set_real_command(char *command, config_rc_t *config,
     char *real_command = NULL;
     char **command_array = str_to_word_array(command, " \t");
 
-    if (get_2d_arr_len(command_array) == 1)
+    if (get_2d_arr_len(command_array) == 1) {
+        free_2d_array_of_char(command_array);
         return config->alias[alias_index].command;
+    }
     real_command = my_strcat_malloc(config->alias[alias_index].command,
         command + strlen(config->alias[alias_index].alias_name));
     return real_command;

@@ -151,5 +151,6 @@ int main(int ac, char **av, char **envp)
     if (mysh_exit_status == EXIT_EOF && isatty(STDIN_FILENO))
         write(1, "exit\n", 5);
     free_2d_array_of_char(env);
+    free_config_st(config);
     return error_code;
 }

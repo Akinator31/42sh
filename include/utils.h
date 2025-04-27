@@ -60,5 +60,6 @@ bool my_strisuppercase(char *str);
 void add_alias(config_rc_t *config, char *args);
 config_rc_t *load_rc(char **env);
 char *my_strcat_malloc(char *str1, char *str2);
+void free_config_st(config_rc_t *config); 
 
 #endif
