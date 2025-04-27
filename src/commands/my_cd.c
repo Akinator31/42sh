@@ -44,11 +44,10 @@ static void my_cd(char ***envp, char *command, int *error_code)
     free_2d_array_of_char(command_element);
 }
 
-bool is_cd_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_cd_command(sh_t *sh_st, exit_status_t *status)
 {
-    if (is_good_cmd("cd", command)) {
-        my_cd(envp, command, error_code);
+    if (is_good_cmd("cd", sh_st->command)) {
+        my_cd(sh_st->envp, sh_st->command, sh_st->error_code);
         *status = NORMAL;
         return true;
     }

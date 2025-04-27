@@ -102,19 +102,18 @@ bool is_correct_arguments(char *name)
     return true;
 }
 
-bool is_setenv_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_setenv_command(sh_t *sh_st, exit_status_t *status)
 {
-    char **cmd_args = str_to_word_array(command, " \n\t");
-    bool is_correct_cmd = is_good_cmd("setenv", command);
+    char **cmd_args = str_to_word_array(sh_st->command, " \n\t");
+    bool is_correct_cmd = is_good_cmd("setenv", sh_st->command);
     int nb_ags = get_2d_arr_len(cmd_args);
 
     if (is_correct_cmd) {
-        if (!error_nb_args(envp, is_correct_cmd, nb_ags, cmd_args)) {
-            *error_code = 1;
+        if (!error_nb_args(sh_st->envp, is_correct_cmd, nb_ags, cmd_args)) {
+            *sh_st->error_code = 1;
             return true;
         }
-        if (my_setenv(envp, cmd_args[1], cmd_args[2], 1) == -1) {
+        if (my_setenv(sh_st->envp, cmd_args[1], cmd_args[2], 1) == -1) {
             write(2, "Not enough space in the environment\n", 36);
             return true;
         }
