@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "my_lib.h"
-#include "commands.h"
 #include "mysh.h"
 #include "utils.h"
 
@@ -29,23 +28,66 @@ int search_inhib(char *command)
     return nb_inib;
 }
 
-static char **format_command(char *command)
+static int find_alias(char *command, alias_t *alias)
 {
-    int nb_inhib = search_inhib(command);
+    int i = 0;
+    int nb_alias = alias->nb_alias;
+    char **command_array = str_to_word_array(command, " \t");
+    char **alias_array = NULL;
 
+    if (!command_array)
+        return -1;
+    while (i != nb_alias) {
+        alias_array = str_to_word_array(alias[i].alias_name, " \t");
+        if (!alias_array)
+            return -1;
+        if (strcmp(command_array[0], alias_array[0]) == 0) {
+            free_2d_array_of_char(command_array);
+            free_2d_array_of_char(alias_array);
+            return i;
+        }
+        i++;
+    }
+    free_2d_array_of_char(command_array);
+    free_2d_array_of_char(alias_array);
+    return -1;
+}
+
+static char *set_real_command(char *command, config_rc_t *config,
+    int alias_index)
+{
+    char *real_command = NULL;
+    char **command_array = str_to_word_array(command, " \t");
+
+    if (get_2d_arr_len(command_array) == 1)
+        return config->alias[alias_index].command;
+    real_command = my_strcat_malloc(config->alias[alias_index].command,
+        command + strlen(config->alias[alias_index].alias_name));
+    return real_command;
+}
+
+static char **format_command(char *command, config_rc_t *config)
+{
+    int nb_inhib = 0;
+    int alias_index = find_alias(command, config->alias);
+    char *real_command = command;
+
+    if (alias_index >= 0)
+        real_command = set_real_command(command, config, alias_index);
+    search_inhib(real_command);
     if (nb_inhib == 0)
-        return str_to_word_array(command, " \n\t");
+        return str_to_word_array(real_command, " \n\t");
     if (nb_inhib % 2 != 0) {
         write(STDERR_FILENO, "Unmatched '''.\n", 15);
         return NULL;
     }
-    return my_str_to_word_array_inhib(command, " \n\t", nb_inhib);
+    return my_str_to_word_array_inhib(real_command, " \n\t", nb_inhib);
 }
 
-char **handle_command(char *command, char **env)
+char **handle_command(sh_t *sh_st)
 {
-    char **command_array = format_command(command);
+    char **command_array = format_command(sh_st->command, sh_st->config);
 
-    handle_env_var_call(command_array, env);
+    handle_env_var_call(command_array, *sh_st->envp);
     return command_array;
 }

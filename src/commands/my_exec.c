@@ -120,7 +120,7 @@ static int exec_binary_path(
 
 int my_exec(sh_t *sh_st, exit_status_t *status, int ret)
 {
-    char **command_element = handle_command(sh_st->command, *sh_st->envp);
+    char **command_element = handle_command(sh_st);
     char *binary_path = get_binary(sh_st->envp, sh_st->command);
 
     if (!get_2d_arr_len(command_element))

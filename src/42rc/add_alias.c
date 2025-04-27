@@ -23,7 +23,7 @@ static void first_alias(config_rc_t *config, char **content)
 
 void add_alias(config_rc_t *config, char *args)
 {
-    char **content = my_str_to_word_array(args, "=");
+    char **content = str_to_word_array(args, "=");
 
     if (!content)
         return;

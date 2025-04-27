@@ -43,7 +43,7 @@ void close_fds(int nb_elements, ...);
 int my_dup2(int oldfd, int newfd);
 struct tm *my_gettime(void);
 size_t count_lines(char *path);
-char **handle_command(char *command, char **env);
+char **handle_command(sh_t *sh_st);
 int skip_inhib(char *str);
 int get_inhib_len(char *str);
 char **my_str_to_word_array_inhib(char *str, char *delim_list,
@@ -59,5 +59,6 @@ bool my_strislowercase(char *str);
 bool my_strisuppercase(char *str);
 void add_alias(config_rc_t *config, char *args);
 config_rc_t *load_rc(char **env);
+char *my_strcat_malloc(char *str1, char *str2);
 
 #endif
