@@ -28,6 +28,12 @@ int search_inhib(char *command)
     return nb_inib;
 }
 
+static void free_all_array(char **arr1, char **arr2)
+{
+    free_2d_array_of_char(arr1);
+    free_2d_array_of_char(arr2);
+}
+
 static int find_alias(char *command, alias_t *alias)
 {
     int i = 0;
@@ -42,14 +48,12 @@ static int find_alias(char *command, alias_t *alias)
         if (!alias_array)
             return -1;
         if (strcmp(command_array[0], alias_array[0]) == 0) {
-            free_2d_array_of_char(command_array);
-            free_2d_array_of_char(alias_array);
+            free_all_array(command_array, alias_array);
             return i;
         }
         i++;
     }
-    free_2d_array_of_char(command_array);
-    free_2d_array_of_char(alias_array);
+    free_all_array(command_array, alias_array);
     return -1;
 }
 

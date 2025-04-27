@@ -53,20 +53,26 @@ static void load_existing_rc(FILE *file, config_rc_t *config)
     free(line);
 }
 
+static char *get_complete_path(char **env, int home_index)
+{
+    char *path_part_one = my_strcat_malloc(env[home_index], "/");
+    char *complete_path = my_strcat_malloc(path_part_one, RC_FILE_NAME);
+
+    free(path_part_one);
+    return complete_path;
+}
+
 config_rc_t *load_rc(char **env)
 {
     FILE *file = NULL;
     int home_index = env_var_already_exist(&env, HOME_VAR);
-    char *path_part_one = NULL;
     char *complete_path = NULL;
     config_rc_t *config = NULL;
 
     if (home_index < 0)
         return NULL;
-    path_part_one = my_strcat_malloc(env[home_index], "/");
-    complete_path = my_strcat_malloc(path_part_one, RC_FILE_NAME);
+    complete_path = get_complete_path(env, home_index);
     file = fopen(complete_path + LEN_HOME_VAR, "r");
-    free(path_part_one);
     free(complete_path);
     if (!file)
         return NULL;
