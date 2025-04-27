@@ -33,8 +33,10 @@ void errno_manager(int exec_return, char **command_element);
 int handle_simple_left_redirection(char *command, int *status);
 int handle_simple_right_redirection(char *command, int *status);
 int handle_double_right_redirection(char *command, int *status);
-int handle_pipes(char *command, char ***envp, int *error_code);
-int handle_semicolons(char *command, char ***envp, int *error_code);
+int handle_pipes(char *command, char ***envp, int *error_code,
+    config_rc_t *config);
+int handle_semicolons(char *command, char ***envp, int *error_code,
+    config_rc_t *config);
 int duplicate_file_descriptor(int fd);
 int restore_stdin_stdout_fd(int stdin_cpy, int stdout_cpy);
 void close_fds(int nb_elements, ...);
@@ -55,5 +57,7 @@ int env_var_already_exist(char ***envp, const char *variable);
 void handle_env_var_call(char **command_array, char **env);
 bool my_strislowercase(char *str);
 bool my_strisuppercase(char *str);
+void add_alias(config_rc_t *config, char *args);
+config_rc_t *load_rc(char **env);
 
 #endif

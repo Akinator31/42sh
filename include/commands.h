@@ -12,22 +12,14 @@
 
 int handle_output_command(int result_command, char *buffer, char ***envp);
 
-bool is_exit_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-bool is_nothing(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-bool is_env_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-bool is_setenv_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-bool is_unsetenv_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-bool is_cd_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-int my_exec(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
-bool is_history_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code);
+bool is_exit_command(sh_t *sh_st, exit_status_t *status);
+bool is_nothing(sh_t *sh_st, exit_status_t *status);
+bool is_env_command(sh_t *sh_st, exit_status_t *status);
+bool is_setenv_command(sh_t *sh_st, exit_status_t *status);
+bool is_unsetenv_command(sh_t *sh_st, exit_status_t *status);
+bool is_cd_command(sh_t *sh_st, exit_status_t *status);
+int my_exec(sh_t *sh_st, exit_status_t *status, int ret);
+bool is_history_command(sh_t *sh_st, exit_status_t *status);
 
 void my_write_history(char *line, char ***envp);
 
