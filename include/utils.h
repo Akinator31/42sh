@@ -11,6 +11,12 @@
     #include <stddef.h>
     #define FAILURE -1
     #define SUCCESS 1
+    #define  NEW_LINE 10
+    #define  SPACE 32
+typedef struct {
+    int is_sub;
+    char *sub_command;
+} subshell_t;
 bool is_good_cmd(char *cmd, char *prompt);
 char *get_environ_var(const char *name, const char *value);
 char *get_environ_variable_value(char ***envp, char *variable);
@@ -41,5 +47,6 @@ struct tm *my_gettime(void);
 size_t count_lines(char *path);
 char *retrive_history_path(char ***envp);
 int my_pipe(int pipefd[2]);
-
+int handle_parenthesis(char *command, char ***envp, int *error_code);
+int analyse_subshell(char *command, char ***envp, int *error_code);
 #endif

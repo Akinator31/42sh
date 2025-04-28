@@ -10,7 +10,7 @@
     #include <stdbool.h>
     #define IS_A_TTY_OFFSET -10
     #define IS_NOT_A_TTY_OFFSET 0
-
+    #define NO_SUBSHELL 0
 typedef enum {
     NORMAL,
     EXIT,
@@ -31,7 +31,7 @@ typedef struct {
 
 
 exit_status_t analyse_command(char ***evnp, char *command,
-    int *error_code);
+    int *error_code, int result_command);
 void cd_to_directory(char ***envp,
     char *path_to_directory, int *error_code, int is_variable);
 
