@@ -20,6 +20,12 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+static void free_if_need(void *ptr)
+{
+    if (ptr)
+        free(ptr);
+}
+
 void exit_manager(int status, pid_t pid, int *error_code)
 {
     if (!WIFEXITED(status)) {
@@ -109,6 +115,7 @@ static int exec_binary_path(
 )
 {
     if (!check_binary(binary_path)) {
+        free_if_need(binary_path);
         *error_code = 84;
         return SUCCESS;
     }
@@ -121,13 +128,14 @@ static int exec_binary_path(
 int my_exec(sh_t *sh_st, exit_status_t *status, int ret)
 {
     char **command_element = handle_command(sh_st);
-    char *binary_path = get_binary(sh_st->envp, sh_st->command);
+    char *binary_path = get_binary(sh_st->envp, command_element);
 
     if (!get_2d_arr_len(command_element))
         return FAILURE;
     if (!binary_path || sh_st->command[0] == '.') {
-        if (run_binary(command_element, sh_st->error_code) == SUCCESS)
+        if (run_binary(command_element, sh_st->error_code) == SUCCESS) {
             return SUCCESS;
+        }
         if (launch_file(sh_st->envp, command_element,
             sh_st->error_code) == FAILURE)
             return FAILURE;
@@ -137,7 +145,6 @@ int my_exec(sh_t *sh_st, exit_status_t *status, int ret)
         if (ret != 0)
             return ret;
     }
-    if (binary_path)
-        free(binary_path);
+    free_if_need(binary_path);
     return SUCCESS;
 }
