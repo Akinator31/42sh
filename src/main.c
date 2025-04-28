@@ -18,7 +18,9 @@
 int handle_output_command(int result_command, char *buffer, char ***envp)
 {
     if (result_command == EXIT) {
-        free(buffer);
+        printf("command %p\n", buffer);
+        if (buffer != NULL)
+            free(buffer);
         return EXIT;
     }
     if (result_command == NORMAL && isatty(STDIN_FILENO))
@@ -28,10 +30,8 @@ int handle_output_command(int result_command, char *buffer, char ***envp)
     return 0;
 }
 
-int mysh(char ***envp, int *error_code)
+int mysh(char ***envp, int *error_code, int stdin_cpy, int stdout_cpy)
 {
-    int stdin_cpy = duplicate_file_descriptor(STDIN_FILENO);
-    int stdout_cpy = duplicate_file_descriptor(STDOUT_FILENO);
     int result_command = 0;
     char *buffer = NULL;
     size_t len = 0;
@@ -40,7 +40,9 @@ int mysh(char ***envp, int *error_code)
         print_prompt(*envp);
     while (getline(&buffer, &len, stdin) != -1) {
         my_write_history(buffer, envp);
-        result_command = analyse_command(envp, buffer, error_code);
+        result_command = analyse_subshell(buffer, envp, error_code);
+        result_command = analyse_command(envp, buffer,
+            error_code, result_command);
         restore_stdin_stdout_fd(stdin_cpy, stdout_cpy);
         if (handle_output_command(result_command, buffer, envp)) {
             close_fds(2, stdin_cpy, stdout_cpy);
@@ -57,11 +59,13 @@ int main(int ac, char **av, char **envp)
     int mysh_exit_status = 0;
     char **env = NULL;
     int error_code = 0;
+    int stdin_cpy = duplicate_file_descriptor(STDIN_FILENO);
+    int stdout_cpy = duplicate_file_descriptor(STDOUT_FILENO);
 
     if (ac > 1)
         return 84;
     env = duplicate_2d_char_array(envp, get_2d_arr_len(envp) + 1);
-    mysh_exit_status = mysh(&env, &error_code);
+    mysh_exit_status = mysh(&env, &error_code, stdin_cpy, stdout_cpy);
     if (mysh_exit_status == EXIT_EOF && isatty(STDIN_FILENO))
         write(1, "exit\n", 5);
     free_2d_array_of_char(env);

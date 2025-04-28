@@ -42,10 +42,15 @@ static int handle_metacharacters(char *command, char ***envp, int *error_code)
     return 0;
 }
 
-exit_status_t analyse_command(char ***envp, char *command, int *error_code)
+exit_status_t analyse_command(char ***envp, char *command,
+    int *error_code, int result_command)
 {
     exit_status_t status = NORMAL;
 
+    if (result_command == -1)
+        return NORMAL;
+    if (result_command > 0)
+        command = &(command[result_command]);
     if (handle_metacharacters(command, envp, error_code))
         return status;
     for (int i = 0; my_builtins_arr[i].builtins_name; i++)
