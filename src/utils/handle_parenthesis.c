@@ -59,6 +59,7 @@ static int valid_prompt(
     }
     return 0;
 }
+
 static int count_parenthesis(
     char *command,
     char ***envp,
