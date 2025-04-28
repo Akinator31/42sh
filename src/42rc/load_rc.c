@@ -22,7 +22,7 @@ static void set_comment(char *str)
     int i = 0;
 
     while (str[i] != '\0') {
-        if (str[i] == '#')
+        if (str[i] == '#' || str[i] == '\n')
             str[i] = '\0';
         i++;
     }
@@ -78,6 +78,7 @@ config_rc_t *load_rc(char **env)
         return NULL;
     config = calloc(1, sizeof(config_rc_t));
     config->alias = NULL;
+    config->is_alias_call = false;
     if (!config)
         return NULL;
     load_existing_rc(file, config);

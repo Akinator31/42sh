@@ -41,5 +41,6 @@ void add_alias(config_rc_t *config, char *args)
         return;
     config->alias[config->alias->nb_alias].alias_name = my_strdup(content[0]);
     config->alias[config->alias->nb_alias].command = my_strdup(content[1]);
+    config->alias->nb_alias = config->alias->nb_alias + 1;
     free_2d_array_of_char(content);
 }
