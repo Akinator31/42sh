@@ -44,6 +44,7 @@ typedef struct {
 } alias_t;
 
 typedef struct {
+    bool is_alias_call;
     alias_t *alias;
 } config_rc_t;
 
