@@ -58,7 +58,7 @@ static int execute_pipe(char ***envp, char **commands, int *error_code)
             return FAILURE;
         if (pid == 0 && my_dup2(fd_in, STDIN_FILENO) != FAILURE) {
             is_next_commands_not_null(commands[i + 1], pipefd);
-            analyse_command(envp, commands[i], error_code);
+            analyse_command(envp, commands[i], error_code, NO_SUBSHELL);
             exit(EXIT_SUCCESS);
         } else {
             close(pipefd[STDOUT_FILENO]);

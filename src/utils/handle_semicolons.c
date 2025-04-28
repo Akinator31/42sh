@@ -21,7 +21,7 @@ static int execute_semicolon(char ***envp, char *command, int *error_code)
         exit(EXIT_FAILURE);
     }
     for (int i = 0; commands[i] != NULL; i++) {
-        analyse_command(envp, commands[i], error_code);
+        analyse_command(envp, commands[i], error_code, NO_SUBSHELL);
         if (my_dup2(stdout_cpy, STDOUT_FILENO) == FAILURE)
             return FAILURE;
     }
