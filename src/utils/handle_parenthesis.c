@@ -51,13 +51,14 @@ static int valid_prompt(
         continue;
     i++;
     for (; command[i] != 0; i++) {
+        if (check_delims(command[i]))
+            return 0;
         if (command[i] == SPACE || command == NULL || command[i] == NEW_LINE)
             continue;
         return -1;
     }
     return 0;
 }
-
 static int count_parenthesis(
     char *command,
     char ***envp,

@@ -36,7 +36,7 @@ static int create_subshell(
     return 0;
 }
 
-static int handle_subshell(
+static void handle_subshell(
     char ***envp,
     char *command,
     subshell_t *subshell,
