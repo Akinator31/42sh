@@ -75,9 +75,11 @@ static char *set_real_command(char *command, config_rc_t *config,
 static char **format_command(char *command, config_rc_t *config)
 {
     int nb_inhib = 0;
-    int alias_index = find_alias(command, config->alias);
+    int alias_index = -1;
     char *real_command = command;
 
+    if (config)
+        alias_index = find_alias(command, config->alias);
     if (alias_index >= 0)
         real_command = set_real_command(command, config, alias_index);
     search_inhib(real_command);
