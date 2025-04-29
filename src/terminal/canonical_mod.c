@@ -12,6 +12,7 @@
 #include <string.h>
 #include "line_buffer.h"
 #include "history.h"
+#include "mysh.h"
 #include "utils.h"
 #include "canonical_mod.h"
 
@@ -46,14 +47,16 @@ static int init_canonical(
   * @param envp Environment variables
   * @return 1 if exit condition met, 0 otherwise
 */
-void input_loop(line_buffer_t *line, history_t *history, char ***envp)
+void input_loop(line_buffer_t *line, history_t *history, char ***envp,
+    config_rc_t *config)
 {
     char c = 0;
     int should_exit = 0;
+    process_input_t p_input = {c, line, history};
 
     while (!should_exit) {
         if (read(STDIN_FILENO, &c, 1) == 1)
-            should_exit = process_input_char(c, line, history, envp);
+            should_exit = process_input_char(&p_input, envp, config);
     }
 }
 
@@ -61,7 +64,7 @@ void input_loop(line_buffer_t *line, history_t *history, char ***envp)
   * Handle input in canonical mode
   * @param envp Environment variables
 */
-void handle_input(char ***envp)
+void handle_input(char ***envp, config_rc_t *config)
 {
     line_buffer_t line = {0};
     history_t history = {0};
@@ -72,7 +75,7 @@ void handle_input(char ***envp)
         cleanup_session(&line, &history, &original);
         return;
     }
-    input_loop(&line, &history, envp);
+    input_loop(&line, &history, envp, config);
     cleanup_session(&line, &history, &original);
 }
 

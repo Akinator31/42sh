@@ -9,6 +9,7 @@
     #define CANONIQUE_MOD_H_
     #include "history.h"
     #include "line_buffer.h"
+    #include "mysh.h"
     #include <termios.h>
 
 typedef struct {
@@ -18,9 +19,15 @@ typedef struct {
     char ***envp;
 } terminal_context_t;
 
+typedef struct {
+    char c;
+    line_buffer_t *line;
+    history_t *history;
+} process_input_t;
+
 int enable_raw_mode(struct termios *original);
 int disable_raw_mode(struct termios *original);
-void handle_input(char ***envp);
+void handle_input(char ***envp, config_rc_t *config);
 void redraw_line(line_buffer_t *line, char **envp);
 void handle_arrow_keys(char seq[2], line_buffer_t *line,
     history_t *history, char **envp);
@@ -32,9 +39,10 @@ void cleanup_session(line_buffer_t *line, history_t *history,
 int setup_terminal(struct termios *original, line_buffer_t *line,
     history_t *history, char **envp);
 void process_normal_char(char c, line_buffer_t *line, char ***envp);
-int process_input_char(char c, line_buffer_t *line,
-    history_t *history, char ***envp);
+int process_input_char(process_input_t *p_input, char ***envp,
+    config_rc_t *config);
 char *canonical_input(char ***envp);
 int handle_escape_sequence(line_buffer_t *line, history_t *history,
     char **envp);
+
 #endif /* !CANONIQUE_MOD_H_ */

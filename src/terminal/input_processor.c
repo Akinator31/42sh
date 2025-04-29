@@ -6,6 +6,7 @@
 */
 
 #include "history.h"
+#include "mysh.h"
 #include "utils.h"
 #include "canonical_mod.h"
 #include <stdio.h>
@@ -18,19 +19,19 @@
   * @param history History structure
   * @param envp Environment variables
 */
-static void process_special_key(char c, line_buffer_t *line,
-    history_t *history, char ***envp)
+static void process_special_key(process_input_t *p_input, char ***envp,
+    config_rc_t *config)
 {
-    if (c == '\n') {
+    if (p_input->c == '\n') {
         printf("\n");
-        line_process_enter(line, history, envp);
+        line_process_enter(p_input->line, p_input->history, envp, config);
         print_prompt(*envp);
         fflush(stdout);
         return;
     }
-    if (c == 127 || c == 8) {
-        line_process_backspace(line);
-        redraw_line(line, *envp);
+    if (p_input->c == 127 || p_input->c == 8) {
+        line_process_backspace(p_input->line);
+        redraw_line(p_input->line, *envp);
     }
 }
 
@@ -48,20 +49,21 @@ int handle_escape_sequence(line_buffer_t *line, history_t *history,
     return 0;
 }
 
-int process_input_char(char c, line_buffer_t *line,
-    history_t *history, char ***envp)
+int process_input_char(process_input_t *p_input, char ***envp,
+    config_rc_t *config)
 {
-    if (c == 27) {
-        if (handle_escape_sequence(line, history, *envp) == -1)
+    if (p_input->c == 27) {
+        if (handle_escape_sequence(p_input->line, p_input->history,
+            *envp) == -1)
             return 1;
         return 0;
     }
-    process_special_key(c, line, history, envp);
-    if (c == 4 && line->length == 0) {
+    process_special_key(p_input, envp, config);
+    if (p_input->c == 4 && p_input->line->length == 0) {
         printf("\n");
         return 1;
     }
-    process_normal_char(c, line, envp);
+    process_normal_char(p_input->c, p_input->line, envp);
     return 0;
 }
 

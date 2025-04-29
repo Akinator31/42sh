@@ -10,6 +10,8 @@ int get_2d_arr_len(char **arr)
     int i = 0;
     int size = 0;
 
+    if (!arr)
+        return 0;
     while (arr[i]) {
         size++;
         i++;

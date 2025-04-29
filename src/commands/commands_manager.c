@@ -26,9 +26,10 @@ static const my_builtins_t my_builtins_arr[] = {
     {NULL, NULL},
 };
 
-static int handle_metacharacters(char *command, char ***envp, int *error_code)
+static int handle_metacharacters(char *command, char ***envp, int *error_code,
+    config_rc_t *config)
 {
-    if (handle_semicolons(command, envp, error_code))
+    if (handle_semicolons(command, envp, error_code, config))
         return 1;
     if (handle_double_right_redirection(command, error_code) == 0)
         return 1;
@@ -36,20 +37,22 @@ static int handle_metacharacters(char *command, char ***envp, int *error_code)
         return 1;
     if (handle_simple_left_redirection(command, error_code) == 0)
         return 1;
-    if (handle_pipes(command, envp, error_code))
+    if (handle_pipes(command, envp, error_code, config))
         return 1;
     return 0;
 }
 
-exit_status_t analyse_command(char ***envp, char *command, int *error_code)
+exit_status_t analyse_command(char ***envp, char *command, int *error_code,
+    config_rc_t *config)
 {
     exit_status_t status = NORMAL;
+    sh_t sh_st = {envp, command, error_code, config};
 
-    if (handle_metacharacters(command, envp, error_code))
+    if (handle_metacharacters(command, envp, error_code, config))
         return status;
     for (int i = 0; my_builtins_arr[i].builtins_name; i++)
-        if (my_builtins_arr[i].f(envp, command, &status, error_code))
+        if (my_builtins_arr[i].f(&sh_st, &status))
             return status;
-    my_exec(envp, command, &status, error_code);
+    my_exec(&sh_st, &status, 0);
     return NORMAL;
 }
