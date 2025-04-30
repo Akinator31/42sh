@@ -86,7 +86,8 @@ static void *handle_alias(char *real_command, char *command, sh_t *sh_st,
     return NULL;
 }
 
-static char **format_command(char *command, config_rc_t *config, sh_t *sh_st)
+static char **format_command(char *command, config_rc_t *config, sh_t *sh_st,
+    bool *inhib_call)
 {
     int nb_inhib = 0;
     int alias_index = -1;
@@ -103,16 +104,20 @@ static char **format_command(char *command, config_rc_t *config, sh_t *sh_st)
         write(STDERR_FILENO, "Unmatched '''.\n", 15);
         return NULL;
     }
+    *inhib_call = true;
+    real_command = my_strcat_malloc(command, "\n");
     return my_str_to_word_array_inhib(real_command, " \n\t", nb_inhib);
 }
 
 char **handle_command(sh_t *sh_st)
 {
+    bool inhib_call = false;
     char **command_array = format_command(sh_st->command, sh_st->config,
-        sh_st);
+        sh_st, &inhib_call);
 
     if (command_array == NULL)
         return NULL;
-    handle_env_var_call(command_array, *sh_st->envp);
+    if (!inhib_call)
+        handle_env_var_call(command_array, *sh_st->envp);
     return command_array;
 }

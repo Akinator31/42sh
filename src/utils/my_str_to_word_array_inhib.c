@@ -127,6 +127,7 @@ char **my_str_to_word_array_inhib(char *str, char *delim_list,
         j = skip_delim(str, j, delim_list);
         i++;
     }
+    free(str);
     word_array[i] = NULL;
     return handle_empty_word_array(word_array, delim_list);
 }
