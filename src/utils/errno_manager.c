@@ -13,10 +13,12 @@
 #include <errno.h>
 #include "my_lib.h"
 
-static char *my_strerror(void)
+static char *my_strerror(int exec_return)
 {
     if (errno == ENOEXEC)
         return "Exec format error. Binary file not executable";
+    if (exec_return == 136)
+        return "Floating exception";
     return strerror(errno);
 }
 
@@ -30,7 +32,7 @@ void errno_manager(int exec_return, char **command_element)
         free_2d_array_of_char(command_element);
         exit(EXIT_FAILURE);
     } else if (exec_return != 0) {
-        error_to_string = my_strerror();
+        error_to_string = my_strerror(exec_return);
         write(2, command_element[0], my_strlen(command_element[0]));
         write(2, ": ", 2);
         write(2, error_to_string, my_strlen(error_to_string));
