@@ -25,7 +25,7 @@ OBJ_TESTS    	= 	$(TESTS:$(TESTS_DIR)/%.c=$(BUILD_TESTS)/%.o)
 
 CC           	= 	gcc
 INCLUDE      	= 	$(INCLUDE_DIRS:%=-I%)
-CFLAGS       	= 	-Wall -Wextra -lm $(INCLUDE) -Wno-unused-parameter
+CFLAGS       	= 	-Wall -Wextra $(INCLUDE) -Wno-unused-parameter
 DEBUG_FLAGS  	= 	-fsanitize=address -g3 $(CFLAGS)
 TEST_FLAGS   	= 	$(CFLAGS) --coverage -lgcov -lcriterion
 
