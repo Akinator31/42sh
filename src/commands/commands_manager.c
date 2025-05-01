@@ -24,6 +24,7 @@ static const my_builtins_t my_builtins_arr[] = {
     {"unsetenv", &is_unsetenv_command},
     {"cd", &is_cd_command},
     {"history", &is_history_command},
+    {"alias", &is_alias_command},
     {NULL, NULL},
 };
 
