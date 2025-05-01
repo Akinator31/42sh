@@ -53,7 +53,7 @@ static int valid_prompt(
     for (; command[i] != 0; i++) {
         if (check_delims(command[i]))
             return 0;
-        if (command[i] == SPACE || command == NULL || command[i] == NEW_LINE)
+        if (command == NULL || command[i] == SPACE || command[i] == NEW_LINE)
             continue;
         return -1;
     }
