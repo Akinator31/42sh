@@ -33,5 +33,6 @@ int my_isspace(int c);
 int my_isnewline(int c);
 int my_strlowcase(char *str);
 int my_strupcase(char *str);
+size_t my_getnbrlen(int number, int base);
 
 #endif
