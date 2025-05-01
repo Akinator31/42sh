@@ -37,14 +37,14 @@ static void print_alias_list(alias_t *alias)
         if (strlen(alias[i].alias_name) > 7) {
             print_long_alias_name(alias[i].alias_name, alias[i].command,
                 &print_parenthese);
+            free_2d_array_of_char(word_array);
             continue;
         }
         if (print_parenthese) {
             printf("%-8s(%s)\n", alias[i].alias_name, alias[i].command);
             print_parenthese = false;
-            continue;
-        }
-        printf("%-8s%s\n", alias[i].alias_name, alias[i].command);
+        } else
+            printf("%-8s%s\n", alias[i].alias_name, alias[i].command);
         free_2d_array_of_char(word_array);
     }
 }
