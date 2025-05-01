@@ -14,7 +14,8 @@ BUILD_TESTS 	=	build-tests
 INCLUDE_DIRS	=	include
 
 SRC          	=	$(shell find $(SRC_DIR) -name "*.c")
-TESTS        	=	$(shell find . -name "*.c" ! -name "main.c")
+TESTS        	=	$(shell find . -name "*.c" ! -name "main.c" \
+                        -not -path "*/bonus/*")
 LIB_SRC      	=	$(shell find $(LIB_DIR) -name "*.c")
 
 OBJ          	= 	$(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
@@ -89,7 +90,7 @@ show_test: tests_run
 	@firefox coverage/index.html
 
 clean:
-	@$(RM) wolf3D debug tests_wolf3D
+	@$(RM) -r $(BUILD_DIR) $(BUILD_DEBUG) $(BUILD_TESTS)
 	@echo "$(COLOR_GREEN)Object files cleaned!$(COLOR_RESET)"
 
 fclean: clean

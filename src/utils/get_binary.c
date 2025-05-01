@@ -37,21 +37,29 @@ char *get_binary_path(char **path_element, char *command)
             free_2d_array_of_char(command_element);
             return file_buffer;
         }
+        if (file_buffer)
+            free(file_buffer);
     }
+    if (file_buffer)
+        free(file_buffer);
     free_2d_array_of_char(command_element);
     return NULL;
 }
 
-char *get_binary(char ***envp, char *command)
+char *get_binary(char ***envp, char **command)
 {
     char *result = NULL;
     char *path = get_environ_variable_value(envp, "PATH");
     char **path_element = NULL;
 
+    if (command == NULL) {
+        free(path);
+        return NULL;
+    }
     if (!path)
         return NULL;
     path_element = str_to_word_array(path, ":\n\t");
-    result = get_binary_path(path_element, command);
+    result = get_binary_path(path_element, command[0]);
     free_2d_array_of_char(path_element);
     free(path);
     return result;

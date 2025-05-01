@@ -11,9 +11,9 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include "commands.h"
 #include "my_lib.h"
-#include "../../include/utils.h"
+#include "utils.h"
+#include "mysh.h"
 
 static int is_next_commands_not_null(char *commands, int pipefd[2])
 {
@@ -46,7 +46,8 @@ int count_nb_pipe(char *command)
     return nb_pipe;
 }
 
-static int execute_pipe(char ***envp, char **commands, int *error_code)
+static int execute_pipe(char ***envp, char **commands, int *error_code,
+    config_rc_t *config)
 {
     int pipefd[2];
     pid_t pid;
@@ -58,7 +59,7 @@ static int execute_pipe(char ***envp, char **commands, int *error_code)
             return FAILURE;
         if (pid == 0 && my_dup2(fd_in, STDIN_FILENO) != FAILURE) {
             is_next_commands_not_null(commands[i + 1], pipefd);
-            analyse_command(envp, commands[i], error_code, NO_SUBSHELL);
+            analyse_command(envp, commands[i], error_code, config);
             exit(EXIT_SUCCESS);
         } else {
             close(pipefd[STDOUT_FILENO]);
@@ -69,7 +70,8 @@ static int execute_pipe(char ***envp, char **commands, int *error_code)
     return SUCCESS;
 }
 
-int handle_pipes(char *command, char ***envp, int *error_code)
+int handle_pipes(char *command, char ***envp, int *error_code,
+    config_rc_t *config)
 {
     char **commands = NULL;
     int nb_pipes = count_nb_pipe(command);
@@ -83,7 +85,7 @@ int handle_pipes(char *command, char ***envp, int *error_code)
             write(2, "Invalid null command.\n", 22);
             return 1;
         }
-        if (execute_pipe(envp, commands, error_code) == FAILURE) {
+        if (execute_pipe(envp, commands, error_code, config) == FAILURE) {
             free_2d_array_of_char(commands);
             return FAILURE;
         }

@@ -22,9 +22,9 @@ void print_hostname(void)
     if (!hostname_file)
         return;
     hostname_len = read(hostname_file, hostname, 253);
-    write(1, "\033[4;37m", 8);
-    write(1, hostname, hostname_len - 1);
-    write(1, "\033[0;37m", 8);
+    if (hostname_len <= 0)
+        return;
+    printf("\033[4;37m%.*s\033[0;37m", (int)(hostname_len - 1), hostname);
     close(hostname_file);
 }
 
@@ -35,15 +35,10 @@ void print_prompt(char **envp)
 
     if (my_strstr(current_dir, home) != NULL) {
         print_hostname();
-        write(1, ":~\033[1;37m", 10);
-        write(1, current_dir + my_strlen(home),
-            my_strlen(current_dir + my_strlen(home)));
-        write(1, "\033[0;37m> ", 10);
+        printf(":~\033[1;37m%s\033[0;37m> ", current_dir + strlen(home));
     } else {
         print_hostname();
-        write(1, ":\033[1;37m", 9);
-        write(1, current_dir, my_strlen(current_dir));
-        write(1, "\033[0;37m> ", 10);
+        printf(":\033[1;37m%s\033[0;37m> ", current_dir);
     }
     free(home);
     free(current_dir);

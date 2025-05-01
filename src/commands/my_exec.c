@@ -17,9 +17,14 @@
 #include "my_lib.h"
 #include "utils.h"
 #include <signal.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+
+static void free_if_need(void *ptr)
+{
+    if (ptr)
+        free(ptr);
+}
 
 void exit_manager(int status, pid_t pid, int *error_code)
 {
@@ -102,27 +107,44 @@ static int run_binary(
     return FAILURE;
 }
 
-int my_exec(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+static int exec_binary_path(
+    char ***envp,
+    char *binary_path,
+    int *error_code,
+    char **command_element
+)
 {
-    char **command_element = str_to_word_array(command, " \n\t");
-    char *binary_path = get_binary(envp, command);
+    if (!check_binary(binary_path)) {
+        free_if_need(binary_path);
+        *error_code = 84;
+        return SUCCESS;
+    }
+    if (launch_binary(envp, binary_path,
+        command_element, error_code) == FAILURE)
+        return FAILURE;
+    return SUCCESS;
+}
 
-    if (!binary_path || command[0] == '.') {
-        if (run_binary(command_element, error_code) == SUCCESS)
-            return SUCCESS;
-        if (launch_file(envp, command_element, error_code) == FAILURE)
-            return FAILURE;
-    } else {
-        if (!check_binary(binary_path)) {
-            *error_code = 84;
+int my_exec(sh_t *sh_st, exit_status_t *status, int ret)
+{
+    char **command_element = handle_command(sh_st);
+    char *binary_path = get_binary(sh_st->envp, command_element);
+
+    if (!get_2d_arr_len(command_element))
+        return FAILURE;
+    if (!binary_path || sh_st->command[0] == '.') {
+        if (run_binary(command_element, sh_st->error_code) == SUCCESS) {
             return SUCCESS;
         }
-        if (launch_binary(envp, binary_path,
-            command_element, error_code) == FAILURE)
+        if (launch_file(sh_st->envp, command_element,
+            sh_st->error_code) == FAILURE)
             return FAILURE;
+    } else {
+        ret = exec_binary_path(sh_st->envp, binary_path,
+            sh_st->error_code, command_element);
+        if (ret != 0)
+            return ret;
     }
-    if (binary_path)
-        free(binary_path);
+    free_if_need(binary_path);
     return SUCCESS;
 }

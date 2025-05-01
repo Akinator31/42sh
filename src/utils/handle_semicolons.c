@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "my_lib.h"
-#include "commands.h"
+#include "mysh.h"
 #include "utils.h"
 #include <stdio.h>
-static int execute_semicolon(char ***envp, char *command, int *error_code)
+
+static int execute_semicolon(char ***envp, char *command, int *error_code,
+    config_rc_t *config)
 {
     int stdout_cpy = dup(STDOUT_FILENO);
     char **commands = str_to_word_array(command, ";\n\t");
@@ -21,7 +23,7 @@ static int execute_semicolon(char ***envp, char *command, int *error_code)
         exit(EXIT_FAILURE);
     }
     for (int i = 0; commands[i] != NULL; i++) {
-        analyse_command(envp, commands[i], error_code, NO_SUBSHELL);
+        analyse_command(envp, commands[i], error_code, config);
         if (my_dup2(stdout_cpy, STDOUT_FILENO) == FAILURE)
             return FAILURE;
     }
@@ -29,10 +31,11 @@ static int execute_semicolon(char ***envp, char *command, int *error_code)
     return SUCCESS;
 }
 
-int handle_semicolons(char *command, char ***envp, int *error_code)
+int handle_semicolons(char *command, char ***envp, int *error_code,
+    config_rc_t *config)
 {
     if (my_strstr(command, ";")) {
-        if (execute_semicolon(envp, command, error_code) == FAILURE)
+        if (execute_semicolon(envp, command, error_code, config) == FAILURE)
             return FAILURE;
         return 1;
     }

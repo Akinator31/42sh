@@ -21,9 +21,9 @@ static const my_cd_t my_flags_arr[] = {
     {'?', NULL, NULL},
 };
 
-static void my_cd(char ***envp, char *command, int *error_code)
+static void my_cd(char ***envp, char *command, int *error_code, sh_t *sh_st)
 {
-    char **command_element = str_to_word_array(command, " \n\t");
+    char **command_element = handle_command(sh_st);
     int nb_args = get_2d_arr_len(command_element);
 
     if (is_too_much_args(nb_args, command_element, error_code))
@@ -44,11 +44,10 @@ static void my_cd(char ***envp, char *command, int *error_code)
     free_2d_array_of_char(command_element);
 }
 
-bool is_cd_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_cd_command(sh_t *sh_st, exit_status_t *status)
 {
-    if (is_good_cmd("cd", command)) {
-        my_cd(envp, command, error_code);
+    if (is_good_cmd("cd", sh_st->command)) {
+        my_cd(sh_st->envp, sh_st->command, sh_st->error_code, sh_st);
         *status = NORMAL;
         return true;
     }

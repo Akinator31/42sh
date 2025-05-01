@@ -5,20 +5,17 @@
 ** exit
 */
 
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <mysh.h>
 #include "my_lib.h"
 #include "utils.h"
 
-bool is_exit_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_exit_command(sh_t *sh_st, exit_status_t *status)
 {
-    if (my_strlen(command) <= 1)
+    if (my_strlen(sh_st->command) <= 1)
         return false;
-    if (is_good_cmd("exit", command)) {
-        write(1, "exit\n", 5);
+    if (is_good_cmd("exit", sh_st->command)) {
         *status = EXIT;
         return true;
     }

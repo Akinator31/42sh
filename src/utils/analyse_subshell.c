@@ -9,18 +9,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <signal.h>
 #include <string.h>
-#include "../../include/my_lib.h"
-#include "../../include/mysh.h"
-#include "../../include/utils.h"
+#include "mysh.h"
+#include "utils.h"
 #include <sys/wait.h>
-#include "../../include/commands.h"
 
 static int create_subshell(
     char *sub_line,
     char ***envp,
-    int *error_code)
+    int *error_code,
+    sh_t *sh_st)
 {
     pid_t pid = fork();
     int status;
@@ -28,7 +26,7 @@ static int create_subshell(
     if (pid == -1)
         return -1;
     if (pid == 0) {
-        analyse_command(envp, sub_line, error_code, 0);
+        analyse_command(sh_st->envp, sub_line, error_code, sh_st->config);
         exit(pid);
     }
     if (pid != 0)
@@ -36,47 +34,42 @@ static int create_subshell(
     return 0;
 }
 
-static void handle_subshell(
-    char ***envp,
-    char *command,
-    subshell_t *subshell,
-    int *error_code)
+static void handle_subshell(sh_t *sh_st, subshell_t *subshell)
 {
     int command_length = 0;
     int i = 0;
     int j = 0;
     char *line = NULL;
 
-    for (int i = 0; command[i] != '('; i++)
+    for (int i = 0; sh_st->command[i] != '('; i++)
         continue;
-    for (j = i + 1; command[j] != ')'; j++)
+    for (j = i + 1; sh_st->command[j] != ')'; j++)
         command_length++;
     i++;
     line = malloc(sizeof(char) * command_length + 1);
     memset(line, 0, command_length + 1);
     for (int x = 0; i != j; i++) {
-        line[x] = command[i];
+        line[x] = sh_st->command[i];
         x++;
     }
-    create_subshell(line, envp, error_code);
+    create_subshell(line, sh_st->envp, sh_st->error_code, sh_st);
     free(line);
 }
 
-int analyse_subshell(
-    char *command,
-    char ***envp,
-    int *error_code)
+int analyse_subshell(sh_t *sh_st, bool *is_subshell)
 {
     subshell_t subshell = {0};
     int save_return;
     int i = 0;
 
-    if (strstr(command, "(")) {
-        save_return = handle_parenthesis(command, envp, error_code);
+    if (strstr(sh_st->command, "(")) {
+        *is_subshell = true;
+        save_return = handle_parenthesis(sh_st->command, sh_st->envp,
+            sh_st->error_code);
         if (save_return == -1)
             return -1;
-        handle_subshell(envp, command, &subshell, error_code);
-        for (; command[i] != ')'; i++)
+        handle_subshell(sh_st, &subshell);
+        for (; sh_st->command[i] != ')'; i++)
             continue;
         return i + 1;
     }

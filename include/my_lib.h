@@ -31,5 +31,7 @@ void *my_realloc(void *pointer, size_t memory_size, size_t original_size);
 void *my_memset(void *pointer, int value, size_t size);
 int my_isspace(int c);
 int my_isnewline(int c);
+int my_strlowcase(char *str);
+int my_strupcase(char *str);
 
 #endif
