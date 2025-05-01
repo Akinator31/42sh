@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "my_lib.h"
-#include "commands.h"
 #include "mysh.h"
 #include "utils.h"
 #include <stdio.h>

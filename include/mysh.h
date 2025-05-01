@@ -11,10 +11,12 @@
     #include <sys/types.h>
     #define IS_A_TTY_OFFSET -10
     #define IS_NOT_A_TTY_OFFSET 0
+    #define NO_SUBSHELL 0
     #define INIBITHORS_CHAR 39
     #define HOME_VAR "HOME"
     #define RC_FILE_NAME ".42shrc"
     #define LEN_HOME_VAR 5
+    #define LEN_ALIAS 5
 
 typedef enum {
     NORMAL,
@@ -52,6 +54,11 @@ typedef struct {
     char *key_word;
     void (*f)(config_rc_t *, char *);
 } config_element_t;
+
+typedef struct {
+    int stdin_cpy;
+    int stdout_cpy;
+} std_cpy_t;
 
 typedef struct {
     char ***envp;

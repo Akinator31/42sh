@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "mysh.h"
-#include "my_lib.h"
 #include "utils.h"
 
 char *get_inhib_content(char *command)
