@@ -69,7 +69,8 @@ static void first_alias(config_rc_t *config, char *alias_name, char *content)
     config->alias->nb_alias = 1;
 }
 
-static void add_alias_by_built_in(char *alias_name, char *content, config_rc_t *config)
+static void add_alias_by_built_in(char *alias_name, char *content,
+    config_rc_t *config)
 {
     if (!content)
         return;
@@ -101,7 +102,7 @@ static void alias_cmd(char **word_array, sh_t *sh_st)
     }
     if (len >= 3) {
         content = str_to_word_array(strstr(sh_st->command,
-            "alias") + LEN_ALIAS," \t");
+            "alias") + LEN_ALIAS, " \t");
         add_alias_by_built_in(content[0], strstr(sh_st->command,
             content[0]) + strlen(content[0]) + 1, sh_st->config);
         free_2d_array_of_char(content);
