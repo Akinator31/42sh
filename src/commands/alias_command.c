@@ -119,6 +119,11 @@ bool is_alias_command(sh_t *sh_st, exit_status_t *status)
         free_2d_array_of_char(word_array);
         return false;
     }
+    if (!sh_st->config || !sh_st->config->alias ||
+        sh_st->config->alias->nb_alias < 1) {
+        free_2d_array_of_char(word_array);
+        return true;
+    }
     alias_cmd(word_array, sh_st);
     free_2d_array_of_char(word_array);
     return true;

@@ -54,7 +54,30 @@ static exit_status_t check_builtins(sh_t *sh_st, exit_status_t *status)
 {
     for (int i = 0; my_builtins_arr[i].builtins_name; i++)
         if (my_builtins_arr[i].f(sh_st, status))
-            return *status;
+            return 1;
+    return 0;
+}
+
+static bool is_subshell(sh_t *sh_st)
+{
+    bool is_subshell = false;
+
+    *sh_st->error_code = analyse_subshell(sh_st, &is_subshell);
+    return is_subshell;
+}
+
+static int check_sh_feature(sh_t *sh_st, char *processed_cmd,
+    exit_status_t *status)
+{
+    if (handle_metacharacters(sh_st->command, sh_st->envp, sh_st->error_code,
+        sh_st->config)) {
+        cleanup_processed_cmd(processed_cmd);
+        return 1;
+    }
+    if (check_builtins(sh_st, status) != 0) {
+        cleanup_processed_cmd(processed_cmd);
+        return 1;
+    }
     return 0;
 }
 
@@ -65,19 +88,15 @@ exit_status_t analyse_command(char ***envp, char *command, int *error_code,
     exit_status_t status = NORMAL;
     sh_t sh_st = {envp, command, error_code, config};
 
+    if (is_subshell(&sh_st))
+        return status;
     if (strchr(command, '`') != NULL) {
         processed_cmd = process_backticks(&sh_st);
         if (processed_cmd)
             sh_st.command = processed_cmd;
     }
-    if (handle_metacharacters(command, envp, error_code, config)) {
-        cleanup_processed_cmd(processed_cmd);
+    if (check_sh_feature(&sh_st, processed_cmd, &status) == 1)
         return status;
-    }
-    if (check_builtins(&sh_st, &status)) {
-        cleanup_processed_cmd(processed_cmd);
-        return status;
-    }
     my_exec(&sh_st, &status, 0);
     cleanup_processed_cmd(processed_cmd);
     return NORMAL;

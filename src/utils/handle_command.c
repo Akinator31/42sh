@@ -93,7 +93,7 @@ static char **format_command(char *command, config_rc_t *config, sh_t *sh_st,
     int alias_index = -1;
     char *real_command = command;
 
-    if (config && config->is_alias_call == false)
+    if (config && config->alias && config->is_alias_call == false)
         alias_index = find_alias(command, config->alias);
     if (alias_index >= 0)
         return handle_alias(real_command, command, sh_st, alias_index);

@@ -11,9 +11,8 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include "commands.h"
 #include "my_lib.h"
-#include "../../include/utils.h"
+#include "utils.h"
 #include "mysh.h"
 
 static int is_next_commands_not_null(char *commands, int pipefd[2])

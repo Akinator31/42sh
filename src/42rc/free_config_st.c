@@ -14,7 +14,7 @@ void free_config_st(config_rc_t *config)
 
     if (!config)
         return;
-    if (config->alias->nb_alias >= 1) {
+    if (config->alias && config->alias->nb_alias >= 1) {
         for (; i < config->alias->nb_alias; i++) {
             free(config->alias[i].alias_name);
             free(config->alias[i].command);

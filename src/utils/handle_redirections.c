@@ -5,14 +5,12 @@
 ** handle_redirections
 */
 
-#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
 #include "my_lib.h"
 #include "utils.h"
-#include "mysh.h"
 
 int handle_simple_left_redirection(char *command, int *status)
 {
