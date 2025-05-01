@@ -16,7 +16,7 @@ size_t my_getnbrlen(int number, int base)
         return 0;
     if (number == 0)
         return 1;
-    if (number > 0 && base == 10) {
+    if (number < 0 && base == 10) {
         len++;
         number = -number;
     }
