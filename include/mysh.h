@@ -15,6 +15,7 @@
     #define HOME_VAR "HOME"
     #define RC_FILE_NAME ".42shrc"
     #define LEN_HOME_VAR 5
+    #define LEN_ALIAS 5
 
 typedef enum {
     NORMAL,

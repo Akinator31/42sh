@@ -7,8 +7,10 @@
 
 #include "my_lib.h"
 #include "mysh.h"
+#include "utils.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -57,9 +59,37 @@ static void show_this_alias_command(char *alias_name, alias_t *alias)
     }
 }
 
+static void first_alias(config_rc_t *config, char *alias_name, char *content)
+{
+    config->alias = malloc(sizeof(alias_t));
+    if (!config->alias)
+        return;
+    config->alias[0].alias_name = my_strdup(alias_name);
+    config->alias[0].command = my_strdup(content);
+    config->alias->nb_alias = 1;
+}
+
+static void add_alias_by_built_in(char *alias_name, char *content, config_rc_t *config)
+{
+    if (!content)
+        return;
+    if (config->alias == NULL) {
+        first_alias(config, alias_name, content);
+        return;
+    }
+    config->alias = realloc(config->alias,
+        sizeof(alias_t) * (config->alias->nb_alias + 1));
+    if (!config->alias)
+        return;
+    config->alias[config->alias->nb_alias].alias_name = my_strdup(alias_name);
+    config->alias[config->alias->nb_alias].command = my_strdup(content);
+    config->alias->nb_alias = config->alias->nb_alias + 1;
+}
+
 static void alias_cmd(char **word_array, sh_t *sh_st)
 {
     int len = get_2d_arr_len(word_array);
+    char **content = NULL;
 
     if (len == 1) {
         print_alias_list(sh_st->config->alias);
@@ -69,14 +99,25 @@ static void alias_cmd(char **word_array, sh_t *sh_st)
         show_this_alias_command(word_array[1], sh_st->config->alias);
         return;
     }
+    if (len >= 3) {
+        content = str_to_word_array(strstr(sh_st->command,
+            "alias") + LEN_ALIAS," \t");
+        add_alias_by_built_in(content[0], strstr(sh_st->command,
+            content[0]) + strlen(content[0]) + 1, sh_st->config);
+        free_2d_array_of_char(content);
+    }
 }
 
 bool is_alias_command(sh_t *sh_st, exit_status_t *status)
 {
     char **word_array = str_to_word_array(sh_st->command, " \n\t");
 
-    if (!word_array || my_strcmp(word_array[0], "alias") != 0)
+    if (!word_array)
         return false;
+    if (my_strcmp(word_array[0], "alias") != 0) {
+        free_2d_array_of_char(word_array);
+        return false;
+    }
     alias_cmd(word_array, sh_st);
     free_2d_array_of_char(word_array);
     return true;
