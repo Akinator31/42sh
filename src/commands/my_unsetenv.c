@@ -72,22 +72,21 @@ bool not_enough_args(bool is_correct_cmd, int nb_args,
     return true;
 }
 
-bool is_unsetenv_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_unsetenv_command(sh_t *sh_st, exit_status_t *status)
 {
     int i = 1;
-    char **cmd_args = str_to_word_array(command, " \n\t");
-    bool is_correct_cmd = is_good_cmd("unsetenv", command);
+    char **cmd_args = str_to_word_array(sh_st->command, " \n\t");
+    bool is_correct_cmd = is_good_cmd("unsetenv", sh_st->command);
     int nb_args = get_2d_arr_len(cmd_args);
     char **new_environ = NULL;
 
-    if (!not_enough_args(is_correct_cmd, nb_args, cmd_args, error_code))
+    if (!not_enough_args(is_correct_cmd, nb_args, cmd_args, sh_st->error_code))
         return false;
     while (is_correct_cmd && cmd_args[i]) {
-        new_environ = duplicate_2d_char_array(*envp,
-            get_2d_arr_len(*envp) + 1);
+        new_environ = duplicate_2d_char_array(*sh_st->envp,
+            get_2d_arr_len(*sh_st->envp) + 1);
         my_unsetenv(new_environ, cmd_args[i]);
-        *envp = new_environ;
+        *sh_st->envp = new_environ;
         i++;
     }
     *status = NORMAL;

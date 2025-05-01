@@ -26,11 +26,10 @@ void env(char **envp)
     write(1, "\n", 1);
 }
 
-bool is_env_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_env_command(sh_t *sh_st, exit_status_t *status)
 {
-    if (is_good_cmd("env", command)) {
-        env(*envp);
+    if (is_good_cmd("env", sh_st->command)) {
+        env(*sh_st->envp);
         *status = NORMAL;
         return true;
     }

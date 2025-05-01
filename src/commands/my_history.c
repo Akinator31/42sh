@@ -61,15 +61,14 @@ static FILE *get_history_file(char *history_file_path)
     return stream;
 }
 
-bool is_history_command(char ***envp, char *command,
-    exit_status_t *status, int *error_code)
+bool is_history_command(sh_t *sh_st, exit_status_t *status)
 {
     char *logpath = NULL;
     struct stat sb = {0};
 
-    if (!is_good_cmd("history", command))
+    if (!is_good_cmd("history", sh_st->command))
         return false;
-    logpath = retrieve_history_path(envp);
+    logpath = retrieve_history_path(sh_st->envp);
     if (!logpath)
         return false;
     stat(logpath, &sb);

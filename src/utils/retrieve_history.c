@@ -15,7 +15,7 @@ char *retrieve_history_path(char ***envp)
     char *logpath = NULL;
 
     if (!homepath)
-        homepath = "/tmp/";
+        homepath = strdup("/tmp");
     logpath = malloc(sizeof(char) * strlen(homepath) + 16);
     logpath = strcpy(logpath, homepath);
     free(homepath);
