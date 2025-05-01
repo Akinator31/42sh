@@ -47,12 +47,26 @@ static void print_alias_list(alias_t *alias)
     }
 }
 
+static void show_this_alias_command(char *alias_name, alias_t *alias)
+{
+    for (uint i = 0; i < alias->nb_alias; i++) {
+        if (strcmp(alias_name, alias[i].alias_name) == 0) {
+            printf("%s\n", alias[i].command);
+            return;
+        }
+    }
+}
+
 static void alias_cmd(char **word_array, sh_t *sh_st)
 {
     int len = get_2d_arr_len(word_array);
 
     if (len == 1) {
         print_alias_list(sh_st->config->alias);
+        return;
+    }
+    if (len == 2) {
+        show_this_alias_command(word_array[1], sh_st->config->alias);
         return;
     }
 }
@@ -64,5 +78,6 @@ bool is_alias_command(sh_t *sh_st, exit_status_t *status)
     if (!word_array || my_strcmp(word_array[0], "alias") != 0)
         return false;
     alias_cmd(word_array, sh_st);
+    free_2d_array_of_char(word_array);
     return true;
 }
