@@ -44,7 +44,7 @@ static void process_repeat_command(sh_t *sh_st, exit_status_t *status)
         }
         sh_st->command = sh_st->command +
             strlen(cmd_args[0]) + strlen(cmd_args[1]) + 2;
-        for (int i = 0; i < repeat_count - 1; i++)
+        for (int i = 0; i < repeat_count; i++)
             my_exec(sh_st, status, 0);
     } else {
         *(sh_st->error_code) = 84;
