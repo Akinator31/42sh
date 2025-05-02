@@ -104,14 +104,19 @@ run_test_xml() {
         echo "<testcase name=\"$escaped_test_name\">" >> $RESULT_XML
         echo "<failure message=\"Output mismatch or exit code\">" >> $RESULT_XML
 
+        echo "Test failed: $TEST_NAME" >> $RESULT_XML
+        echo "Command: $COMMAND" | xml_escape >> $RESULT_XML
+        echo "Execution test command : $COMMAND | $SH_42" | xml_escape >> $RESULT_XML
+        echo "Exit codes: 42sh=$EXIT_42, tcsh=$EXIT_TCSH" >> $RESULT_XML
         echo "Expected (tcsh - stdout + stderr):" 
-        xml_escape < "$TEST_DIR/tcsh_all" 
+        cat "$TEST_DIR/tcsh_all" 
         echo "Expected (tcsh - stdout + stderr):" >> $RESULT_XML
         xml_escape < "$TEST_DIR/tcsh_all" >> $RESULT_XML
         
         echo ""
+        echo "" >> $RESULT_XML
         echo "Got (42sh - stdout + stderr):" 
-        xml_escape < "$TEST_DIR/42sh_all"
+        cat "$TEST_DIR/42sh_all"
         echo "Got (42sh - stdout + stderr):" >> $RESULT_XML
         xml_escape < "$TEST_DIR/42sh_all" >> $RESULT_XML
 
@@ -223,7 +228,7 @@ else
     run_test "Piping" "ls | grep .sh"
     run_test "Redirections" "echo test > \$TEST_DIR/testfile; cat \$TEST_DIR/testfile"
     run_test "Environment variables" "echo \$HOME"
-    run_test "Command substitution" "echo \$(ls)"
+    run_test "Command substitution" "echo (ls)"
     run_test "Aliases" "alias ll='ls -l'; ll"
     run_test "Exit command" "exit 42"
     run_test "Background process" "sleep 1 &"
