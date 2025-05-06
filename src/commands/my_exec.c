@@ -30,7 +30,10 @@ void exit_manager(int status, pid_t pid, int *error_code)
 {
     if (!WIFEXITED(status)) {
         *error_code = 128 + WTERMSIG(status);
-        my_putstr(strsignal(WTERMSIG(status)), 2);
+        if (*error_code != 136)
+            my_putstr(strsignal(WTERMSIG(status)), 2);
+        else
+            my_putstr("Floating exception", 2);
         write(2, "\n", 1);
         return;
     }
