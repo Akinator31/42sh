@@ -26,6 +26,7 @@ static const my_builtins_t my_builtins_arr[] = {
     {"history", &is_history_command},
     {"repeat", &is_repeat_command},
     {"alias", &is_alias_command},
+    {"where", &is_where_command},
     {NULL, NULL},
 };
 

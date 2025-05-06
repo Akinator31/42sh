@@ -21,6 +21,7 @@ bool is_cd_command(sh_t *sh_st, exit_status_t *status);
 int my_exec(sh_t *sh_st, exit_status_t *status, int ret);
 bool is_history_command(sh_t *sh_st, exit_status_t *status);
 bool is_repeat_command(sh_t *sh_st, exit_status_t *status);
+bool is_where_command(sh_t *sh_st, exit_status_t *status);
 
 void my_write_history(char *line, char ***envp);
 
