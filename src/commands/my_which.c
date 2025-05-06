@@ -29,6 +29,7 @@ static bool check_if_valid(char *cmd, char *token)
         return true;
     }
     free(file);
+    return false;
 }
 
 static void find_binaries(sh_t *sh_st)
