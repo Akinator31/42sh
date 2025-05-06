@@ -34,5 +34,7 @@ int my_isnewline(int c);
 int my_strlowcase(char *str);
 int my_strupcase(char *str);
 size_t my_getnbrlen(int number, int base);
+int my_getnbr(char const *str);
+int my_compute_power_rec(int nb, int p);
 
 #endif
