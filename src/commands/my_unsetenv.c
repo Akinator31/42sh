@@ -5,6 +5,8 @@
 ** unsetenv
 */
 
+#include <complex.h>
+#include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -72,6 +74,13 @@ bool not_enough_args(bool is_correct_cmd, int nb_args,
     return true;
 }
 
+static bool was_unsetenv(char **cmd_args, sh_t *sh_st)
+{
+    if (cmd_args && strcmp(cmd_args[0], "unsetenv") == 0)
+        return true;
+    return false;
+}
+
 bool is_unsetenv_command(sh_t *sh_st, exit_status_t *status)
 {
     int i = 1;
@@ -79,9 +88,10 @@ bool is_unsetenv_command(sh_t *sh_st, exit_status_t *status)
     bool is_correct_cmd = is_good_cmd("unsetenv", sh_st->command);
     int nb_args = get_2d_arr_len(cmd_args);
     char **new_environ = NULL;
+    bool is_unsetenv = was_unsetenv(cmd_args, sh_st);
 
     if (!not_enough_args(is_correct_cmd, nb_args, cmd_args, sh_st->error_code))
-        return false;
+        return is_unsetenv;
     while (is_correct_cmd && cmd_args[i]) {
         new_environ = duplicate_2d_char_array(*sh_st->envp,
             get_2d_arr_len(*sh_st->envp) + 1);

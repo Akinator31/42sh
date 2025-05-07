@@ -18,13 +18,8 @@ int check_meta_format(char *command, char *meta)
         free_2d_array_of_char(array);
         return 0;
     }
-    if (len != 3) {
+    if (len < 3) {
         printf("Invalid null command.\n");
-        free_2d_array_of_char(array);
-        return 0;
-    }
-    if (my_strcmp(array[1], meta) != 0) {
-        printf("Missing name for redirect.\n");
         free_2d_array_of_char(array);
         return 0;
     }
