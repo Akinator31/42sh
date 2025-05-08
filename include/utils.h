@@ -63,7 +63,7 @@ int analyse_subshell(sh_t *sh_st, bool *is_subshell);
 char *retrieve_history_path(char ***envp);
 int check_meta_format(char *command, char *meta);
 int env_var_already_exist(char ***envp, const char *variable);
-void handle_env_var_call(char **command_array, char **env);
+void handle_env_var_call(char **command_array, sh_t *sh_st);
 bool my_strislowercase(char *str);
 bool my_strisuppercase(char *str);
 void add_alias(config_rc_t *config, char *args);

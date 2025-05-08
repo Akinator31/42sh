@@ -34,6 +34,7 @@ typedef struct {
 
 typedef struct shell_context_s {
     char ***envp;
+    char **var;
     int *error_code;
     int stdin_cpy;
     int stdout_cpy;
@@ -62,6 +63,7 @@ typedef struct {
 
 typedef struct {
     char ***envp;
+    char **var;
     char *command;
     int *error_code;
     config_rc_t *config;
