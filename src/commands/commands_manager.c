@@ -28,7 +28,6 @@ static const my_builtins_t my_builtins_arr[] = {
     {"alias", &is_alias_command},
     {"where", &is_where_command},
     {"which", &is_which_command},
-    {"set", &is_set_command},
     {NULL, NULL},
 };
 
