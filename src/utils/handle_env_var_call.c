@@ -21,15 +21,12 @@ static int get_index_var_env(char **command, char **env)
 
     if (index_env >= 0)
         return index_env;
-    printf("ca continue\n");
     dup_command = my_strdup(command[0]);
     if (my_strislowercase(command[0] + 1))
         my_strupcase(dup_command);
     if (my_strisuppercase(command[0] + 1))
         my_strlowcase(dup_command);
-    printf("%s\n", dup_command);
     index_env = env_var_already_exist(&env, dup_command + 1);
-    printf("val %s\n", env[66]);
     free(dup_command);
     return index_env;
 }
@@ -61,6 +58,6 @@ void handle_env_var_call(char **command_array, sh_t *sh_st)
 {
     for (int i = 0; command_array[i] != NULL; i++) {
         if (command_array[i][0] == '$')
-            handle_if_is_var_env(&command_array[i], sh_st->var);
+            handle_if_is_var_env(&command_array[i], *sh_st->envp);
     }
 }
