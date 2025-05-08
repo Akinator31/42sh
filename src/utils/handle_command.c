@@ -118,6 +118,6 @@ char **handle_command(sh_t *sh_st)
     if (command_array == NULL)
         return NULL;
     if (!inhib_call)
-        handle_env_var_call(command_array, *sh_st->envp);
+        handle_env_var_call(command_array, sh_st);
     return command_array;
 }

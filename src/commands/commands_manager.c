@@ -29,6 +29,7 @@ static const my_builtins_t my_builtins_arr[] = {
     {"where", &is_where_command},
     {"which", &is_which_command},
     {"set", &is_set_command},
+    {"unset", &is_unset_command},
     {NULL, NULL},
 };
 
@@ -90,8 +91,11 @@ exit_status_t analyse_command(char ***envp, char *command, int *error_code,
 {
     char *processed_cmd = NULL;
     exit_status_t status = NORMAL;
-    sh_t sh_st = {envp, command, error_code, config};
+    sh_t sh_st = {0};
 
+    sh_st.envp = envp;
+    sh_st.command = command;
+    sh_st.error_code = error_code;
     if (is_subshell(&sh_st))
         return status;
     if (strchr(command, '`') != NULL) {

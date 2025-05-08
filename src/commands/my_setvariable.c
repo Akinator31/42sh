@@ -11,7 +11,7 @@
 #include "my_lib.h"
 #include "utils.h"
 #include "mysh.h"
-
+#include <string.h>
 static int incorrect_first_char(char **cmd_args)
 {
     if (!(my_isalpha(cmd_args[1][0]) || cmd_args[1][0] == '_') ||
@@ -22,14 +22,12 @@ static int incorrect_first_char(char **cmd_args)
     return true;
 }
 
-static bool error_nb_args(char ***envp, bool is_correct_cmd,
+static bool error_nb_args(bool is_correct_cmd,
     int nb_args, char **cmd_args)
 {
     if (is_correct_cmd && (nb_args > 3 || nb_args == 1)) {
         if (nb_args > 3)
             write(2, "env: Too many arguments.\n", 25);
-        if (nb_args == 1)
-            env(*envp);
         free_2d_array_of_char(cmd_args);
         return false;
     }
@@ -45,6 +43,29 @@ static bool error_nb_args(char ***envp, bool is_correct_cmd,
     return true;
 }
 
+int my_setvar(char ***var, const char *name, const char *value,
+    int overwrite)
+{
+    int environ_size = get_2d_arr_len(*var);
+    int variable_index_if_existing = env_var_already_exist(var, name);
+    char **new_environ = NULL;
+    char **env = *var;
+
+    if (variable_index_if_existing != -1) {
+        if (!overwrite)
+            return 0;
+        free(env[variable_index_if_existing]);
+        env[variable_index_if_existing] = get_environ_var(name, value);
+        return 0;
+    } else {
+        new_environ = duplicate_2d_char_array(*var, environ_size + 2);
+        free_2d_array_of_char(*var);
+        new_environ[environ_size] = get_environ_var(name, value);
+        *var = new_environ;
+        return 0;
+    }
+}
+
 bool is_set_command(sh_t *sh_st, exit_status_t *status)
 {
     char **cmd_args = str_to_word_array(sh_st->command, " \n\t");
@@ -52,11 +73,11 @@ bool is_set_command(sh_t *sh_st, exit_status_t *status)
     int nb_ags = get_2d_arr_len(cmd_args);
 
     if (is_correct_cmd) {
-        if (!error_nb_args(sh_st->envp, is_correct_cmd, nb_ags, cmd_args)) {
+        if (!error_nb_args(is_correct_cmd, nb_ags, cmd_args)) {
             *sh_st->error_code = 1;
             return true;
         }
-        if (my_setenv(sh_st->envp, cmd_args[1], cmd_args[2], 1) == -1) {
+        if (my_setvar(&sh_st->var, cmd_args[1], cmd_args[2], 1) == -1) {
             write(2, "Not enough space in the environment\n", 36);
             return true;
         }
