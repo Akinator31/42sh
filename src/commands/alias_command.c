@@ -92,6 +92,15 @@ static void alias_cmd(char **word_array, sh_t *sh_st)
     int len = get_2d_arr_len(word_array);
     char **content = NULL;
 
+    if (len >= 3) {
+        content = str_to_word_array(strstr(sh_st->command,
+            "alias") + LEN_ALIAS, " \t");
+        add_alias_by_built_in(content[0], strstr(sh_st->command,
+            content[0]) + strlen(content[0]) + 1, sh_st->config);
+        free_2d_array_of_char(content);
+    }
+    if (!sh_st->config)
+        return;
     if (len == 1) {
         print_alias_list(sh_st->config->alias);
         return;
@@ -99,13 +108,6 @@ static void alias_cmd(char **word_array, sh_t *sh_st)
     if (len == 2) {
         show_this_alias_command(word_array[1], sh_st->config->alias);
         return;
-    }
-    if (len >= 3) {
-        content = str_to_word_array(strstr(sh_st->command,
-            "alias") + LEN_ALIAS, " \t");
-        add_alias_by_built_in(content[0], strstr(sh_st->command,
-            content[0]) + strlen(content[0]) + 1, sh_st->config);
-        free_2d_array_of_char(content);
     }
 }
 
@@ -118,11 +120,6 @@ bool is_alias_command(sh_t *sh_st, exit_status_t *status)
     if (my_strcmp(word_array[0], "alias") != 0) {
         free_2d_array_of_char(word_array);
         return false;
-    }
-    if (!sh_st->config || !sh_st->config->alias ||
-        sh_st->config->alias->nb_alias < 1) {
-        free_2d_array_of_char(word_array);
-        return true;
     }
     alias_cmd(word_array, sh_st);
     free_2d_array_of_char(word_array);
