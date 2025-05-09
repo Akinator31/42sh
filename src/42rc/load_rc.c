@@ -62,6 +62,13 @@ static char *get_complete_path(char **env, int home_index)
     return complete_path;
 }
 
+static config_rc_t *empty_rc(void)
+{
+    config_rc_t *config = malloc(sizeof(config_rc_t));
+
+    return config;
+}
+
 config_rc_t *load_rc(char **env)
 {
     FILE *file = NULL;
@@ -75,7 +82,7 @@ config_rc_t *load_rc(char **env)
     file = fopen(complete_path + LEN_HOME_VAR, "r");
     free(complete_path);
     if (!file)
-        return NULL;
+        return empty_rc();
     config = calloc(1, sizeof(config_rc_t));
     config->alias = NULL;
     config->is_alias_call = false;
