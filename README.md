@@ -6,11 +6,10 @@
 
 - [x] Exécution de commandes binaires avec ou sans chemin
 - [x] Gestion des pipes (`|`) et des redirections (`>`, `<`, `>>`, `<<`)
-- [ ] Gestion des variables d’environnement
+- [x] Gestion des variables d’environnement
 - [x] Implémentation de built-ins (`cd`, `setenv`, `unsetenv`, `exit`, ...)
-- [ ] Parsing avancé et traitement syntaxique
-- [ ] Mode interactif avec prompt
-- [ ] Gestion des erreurs et des signaux
+- [x] Gestion des erreurs et des signaux
+- [x] Fichier source pour ajouter des alias
 - [x] Système de test unitaire
 
 ## Compilation
